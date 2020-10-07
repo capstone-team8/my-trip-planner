@@ -20,6 +20,7 @@ app.use(cookieParser())
 app.use('/api/hello', require('./routes/hello'))
 app.use('/api/user', require('./routes/user'))
 app.use('/api/location', require('./routes/location'))
+app.use('/api/plan', require('./routes/plan'))
 
 // Start the app
 app.listen(port, () => {
