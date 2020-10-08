@@ -4,6 +4,8 @@ import router from './router'
 
 import Vuesax from 'vuesax'
 
+import * as VueGoogleMaps from 'vue2-google-maps';
+
 // Use Vuesax UI framework
 import 'vuesax/dist/vuesax.css'
 Vue.use(Vuesax, {
@@ -13,6 +15,14 @@ Vue.use(Vuesax, {
     success: 'rgb(91, 60, 196)'
   } */
 })
+
+// Use vue2-google-maps for GoogleMapAPI
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: process.env.VUE_APP_API_KEY,
+    libraries: "places",
+  },
+});
 
 Vue.config.productionTip = false
 
