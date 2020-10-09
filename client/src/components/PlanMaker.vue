@@ -110,7 +110,21 @@ export default {
 	},
 	methods: {
 		add(location, place) {
-			this.locationsSelected.push(location)
+			var dup=false
+			if(this.locationsSelected.length!=0){
+				for(var i=0;i<this.locationsSelected.length;i++){
+					if(!this.locationsSelected[i].id.indexOf(location.id)){
+						dup=true
+						break
+					}
+				}
+				if(dup==false){
+					this.locationsSelected.push(location)
+				}
+			}
+			else{
+				this.locationsSelected.push(location)
+			}
 		},
 		create(locationsSelected){
 
