@@ -29,7 +29,7 @@
 								</div>
 								<div class="table-expand-buttons">
 									<vs-tooltip>
-										<vs-button v-on:click="add(location, '관광지')" gradient success icon>
+										<vs-button v-on:click="add(location, 'area')" gradient success icon>
 											<i class="bx bxs-map"></i>
 										</vs-button>
 										<template #tooltip>
@@ -37,7 +37,7 @@
 										</template>
 									</vs-tooltip>
 									<vs-tooltip>
-										<vs-button v-on:click="add(location, '야경')" gradient primary icon>
+										<vs-button v-on:click="add(location, 'night')" gradient primary icon>
 											<i class="bx bxs-moon"></i>
 										</vs-button>
 										<template #tooltip>
@@ -45,7 +45,7 @@
 										</template>
 									</vs-tooltip>
 									<vs-tooltip>
-										<vs-button v-on:click="add(location, '식당')" gradient danger icon>
+										<vs-button v-on:click="add(location, 'restaurant')" gradient danger icon>
 											<i class="bx bx-restaurant"></i>
 										</vs-button>
 										<template #tooltip>
@@ -53,7 +53,7 @@
 										</template>
 									</vs-tooltip>
 									<vs-tooltip>
-										<vs-button v-on:click="add(location, '카페')" gradient warn icon>
+										<vs-button v-on:click="add(location, 'cafe')" gradient warn icon>
 											<i class="bx bxs-coffee-alt"></i>
 										</vs-button>
 										<template #tooltip>
@@ -61,7 +61,7 @@
 										</template>
 									</vs-tooltip>
 									<vs-tooltip>
-										<vs-button v-on:click="add(location, '바')" gradient dark icon>
+										<vs-button v-on:click="add(location, 'bar')" gradient dark icon>
 											<i class="bx bxs-drink"></i>
 										</vs-button>
 										<template #tooltip>
@@ -120,10 +120,12 @@ export default {
 				}
 				if(dup==false){
 					this.locationsSelected.push(location)
+					this.locationsSelected[this.locationsSelected.length-1].field=place
 				}
 			}
 			else{
 				this.locationsSelected.push(location)
+				this.locationsSelected[this.locationsSelected.length-1].field=place
 			}
 		},
 		create(locationsSelected){
