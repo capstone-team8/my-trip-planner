@@ -14,7 +14,7 @@
 					방문할 장소를 검색해주세요.
 				</template>
 				<template #tbody>
-					<vs-tr :key="location.id" v-for="location in locations">
+					<vs-tr :key="location.id" v-for="location in locations" v-if="location.name.includes(searchInput) && searchInput!=''">
 						<vs-td>
 							{{ location.name }}
 						</vs-td>
@@ -29,7 +29,7 @@
 								</div>
 								<div class="table-expand-buttons">
 									<vs-tooltip>
-										<vs-button gradient success icon>
+										<vs-button v-on:click="add(location, 'area')" gradient success icon>
 											<i class="bx bxs-map"></i>
 										</vs-button>
 										<template #tooltip>
@@ -37,7 +37,7 @@
 										</template>
 									</vs-tooltip>
 									<vs-tooltip>
-										<vs-button gradient primary icon>
+										<vs-button v-on:click="add(location, 'night')" gradient primary icon>
 											<i class="bx bxs-moon"></i>
 										</vs-button>
 										<template #tooltip>
@@ -45,7 +45,7 @@
 										</template>
 									</vs-tooltip>
 									<vs-tooltip>
-										<vs-button gradient danger icon>
+										<vs-button v-on:click="add(location, 'restaurant')" gradient danger icon>
 											<i class="bx bx-restaurant"></i>
 										</vs-button>
 										<template #tooltip>
@@ -53,7 +53,7 @@
 										</template>
 									</vs-tooltip>
 									<vs-tooltip>
-										<vs-button gradient warn icon>
+										<vs-button v-on:click="add(location, 'cafe')" gradient warn icon>
 											<i class="bx bxs-coffee-alt"></i>
 										</vs-button>
 										<template #tooltip>
@@ -61,7 +61,7 @@
 										</template>
 									</vs-tooltip>
 									<vs-tooltip>
-										<vs-button gradient dark icon>
+										<vs-button v-on:click="add(location, 'bar')" gradient dark icon>
 											<i class="bx bxs-drink"></i>
 										</vs-button>
 										<template #tooltip>
@@ -90,7 +90,7 @@
 				</template>
 			</vs-table>
 		</div>
-		<vs-button class="button-make" flat :active="true">
+		<vs-button class="button-make" v-on:click="create(locationsSelected)" flat :active="true">
 			일정 생성
 		</vs-button>
 	</div>
@@ -105,10 +105,35 @@ export default {
 			searchInput: '',
 			selected: [],
 			locations: dummyLocations,
-			locationsSelected: [dummyLocations[0]]
+			locationsSelected: []
+		}
+	},
+	methods: {
+		add(location, place) {
+			var dup=false
+			if(this.locationsSelected.length!=0){
+				for(var i=0;i<this.locationsSelected.length;i++){
+					if(!this.locationsSelected[i].id.indexOf(location.id)){
+						dup=true
+						break
+					}
+				}
+				if(dup==false){
+					this.locationsSelected.push(location)
+					this.locationsSelected[this.locationsSelected.length-1].field=place
+				}
+			}
+			else{
+				this.locationsSelected.push(location)
+				this.locationsSelected[this.locationsSelected.length-1].field=place
+			}
+		},
+		create(locationsSelected){
+
 		}
 	}
 }
+
 </script>
 
 <style scoped>
