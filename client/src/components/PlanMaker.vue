@@ -1,21 +1,21 @@
 <template>
 	<div class="flex-box">
-		<vs-input icon-after v-model="searchInput" placeholder="장소 검색">
+		<vs-input icon-after v-model="searchInput" @keyup.enter="search" placeholder="장소 검색">
 			<template #icon>
 				<i class="bx bx-search" />
 			</template>
 		</vs-input>
 		<div class="tables">
-			<vs-table v-model="selected">
+			<vs-table>
 				<template #header>
 					검색 결과
 				</template>
 				<template #notFound>
 					방문할 장소를 검색해주세요.
 				</template>
-				<template #tbody>
-					<vs-tr :key="location.id" v-for="location in locations" v-if="location.name.includes(searchInput) && searchInput!=''">
-						<vs-td>
+				<template v-if="locations.length" #tbody>
+					<vs-tr :key="location.place_id" v-for="location in locations">
+						<vs-td @click="toggleLocation(location)">
 							{{ location.name }}
 						</vs-td>
 						<template #expand>
@@ -82,7 +82,7 @@
 					여행할 장소를 등록해주세요.
 				</template>
 				<template #tbody>
-					<vs-tr :key="location.id" v-for="location in locationsSelected">
+					<vs-tr :key="location.place_id" v-for="location in locationsSelected">
 						<vs-td>
 							{{ location.name }}
 						</vs-td>
@@ -97,43 +97,86 @@
 </template>
 
 <script>
-import dummyLocations from '../../data/dummyLocations'
+import requestHandler from '../utils/requestHandler'
+
+const searchFailText = '검색에 실패했습니다. 다시 시도해주세요.'
 
 export default {
 	data: function() {
 		return {
 			searchInput: '',
-			selected: [],
-			locations: dummyLocations,
-			locationsSelected: []
+			locations: [],
+			locationsSelected: [],
+			locationFocused: undefined,
+			rowsExpanded: []
 		}
 	},
 	methods: {
+		search() {
+			// 테이블 초기화
+			this.locations = []
+			this.rowsExpanded = []
+			if (this.locationFocused) this.$emit('locationFocusCanceled')
+
+			if (!this.searchInput.length) return
+
+			requestHandler
+				.sendRequest(this.searchInput)
+				.then((response) => {
+					this.locations = response.locations
+
+					if (!this.locations.length) {
+						alert(searchFailText)
+					}
+				})
+				.catch((error) => {
+					alert('검색에 실패했습니다. 다시 시도해주세요.')
+					console.error(error)
+				})
+		},
+		// 주소 row를 선택했을 때 마커를 토글
+		toggleLocation(location) {
+			const index = this.rowsExpanded.indexOf(location.place_id)
+
+			if (index >= 0) {
+				// expand 됐던 row를 취소하는경우
+				// rowsExpanded에서 현재 row 삭제
+				this.rowsExpanded.splice(index, 1)
+
+				// 현재 focus인 경우 focus 삭제
+				if (this.locationFocused && this.locationFocused.place_id === location.place_id) {
+					this.locationFocused = undefined
+					this.$emit('locationFocusCanceled')
+				}
+			} else {
+				// 새 row를 expand, focus 하는 경우
+				this.rowsExpanded.push(location.place_id)
+				this.locationFocused = location
+
+				this.$emit('locationFocused', this.locationFocused)
+			}
+		},
 		add(location, place) {
-			var dup=false
-			if(this.locationsSelected.length!=0){
-				for(var i=0;i<this.locationsSelected.length;i++){
-					if(!this.locationsSelected[i].id.indexOf(location.id)){
-						dup=true
+			var dup = false
+			if (this.locationsSelected.length != 0) {
+				for (var i = 0; i < this.locationsSelected.length; i++) {
+					if (!this.locationsSelected[i].place_id.indexOf(location.place_id)) {
+						dup = true
 						break
 					}
 				}
-				if(dup==false){
+				if (dup == false) {
 					this.locationsSelected.push(location)
-					this.locationsSelected[this.locationsSelected.length-1].field=place
+					this.locationsSelected[this.locationsSelected.length - 1].field = place
 				}
-			}
-			else{
+			} else {
 				this.locationsSelected.push(location)
-				this.locationsSelected[this.locationsSelected.length-1].field=place
+				this.locationsSelected[this.locationsSelected.length - 1].field = place
 			}
 		},
-		create(locationsSelected){
-
-		}
+		create(locationsSelected) {}
 	}
 }
-
 </script>
 
 <style scoped>

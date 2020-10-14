@@ -19,7 +19,7 @@ Vue.use(Vuesax, {
 // Use vue2-google-maps for GoogleMapAPI
 Vue.use(VueGoogleMaps, {
   load: {
-    key: process.env.VUE_APP_API_KEY,
+    key: process.env.VUE_APP_GMAP_API_KEY,
     libraries: "places",
   },
 });

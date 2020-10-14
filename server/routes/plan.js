@@ -4,7 +4,7 @@ const router = express.Router()
 router.put('/make', (req, res) => {
 	console.log(req.body)
 
-	res.status(400).send('plan make endpoint')
+	res.status(200).send('plan make endpoint')
 })
 
 module.exports = router
