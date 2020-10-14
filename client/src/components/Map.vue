@@ -1,14 +1,10 @@
 <template>
   <div class="container">
-    <label> T1: 37.293974, 126.975431 </label>
-    <vs-button class = "button-make" @click="setPlace({lat: 37.293974, lng: 126.975431})"> 마커 등록 </vs-button>
-    <label> T2: 37.29, 126.97 </label>
-    <vs-button class = "button-make" @click="setPlace({lat: 37.29, lng: 126.97})"> 마커 등록 </vs-button>
     <GmapMap
       ref="mapRef"
       :center="center"
       :zoom="16"
-      style="width: 100%; height: 80%"
+      style="width: 100%; height: 100%"
     >
       <GmapMarker
         :key="index"
@@ -53,10 +49,5 @@ export default {
 .container {
   width: 100%;
   height: 100%;
-}
-
-.button-make {
-	width: 100%;
-	align-self: flex-end;
 }
 </style>
