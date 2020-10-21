@@ -1,12 +1,22 @@
 import axios from 'axios'
 
 export default {
-	sendRequest: async (text) => {
+	sendGetRequest: async (endPoint, params) => {
+		const url = process.env.VUE_APP_API_DOMAIN + endPoint
 		try {
-			const url = process.env.VUE_APP_API_DOMAIN + '/location/search'
 			const res = await axios.get(url, {
-				params: { text: text }
+				params: params
 			})
+
+			return res.data
+		} catch (error) {
+			throw error
+		}
+	},
+	sendPutRequest: async (endPoint, data) => {
+		const url = process.env.VUE_APP_API_DOMAIN + endPoint
+		try {
+			const res = await axios.put(url, data)
 
 			return res.data
 		} catch (error) {
