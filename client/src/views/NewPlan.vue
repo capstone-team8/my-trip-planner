@@ -5,12 +5,12 @@
 				<vs-row class="fullHeight">
 					<vs-col class="fullHeight" w="6" sm="12">
 						<vs-row class="fullHeight" align="center" justify="center">
-							<PlanMaker class="planMaker" @locationFocused="onLocationFocused" @locationFocusCanceled="onLocationFocusCanceled" />
+							<PlanMaker class="planMaker" @locationFocused="onLocationFocused" @locationFocusCanceled="onLocationFocusCanceled" @addMarker="addMarker" />
 						</vs-row>
 					</vs-col>
 					<vs-col class="fullHeight" w="6" sm="12">
 						<vs-row class="fullHeight" align="center" justify="center">
-							<Map class="map" :markerFocused="markerFocused" />
+							<Map class="map" :markers="markers" :markerFocused="markerFocused"/>
 						</vs-row>
 					</vs-col>
 				</vs-row>
@@ -27,7 +27,8 @@ export default {
 	name: 'NewPlan',
 	data: function() {
 		return {
-			markerFocused: undefined
+			markerFocused: undefined,
+			markers: []
 		}
 	},
 	components: {
@@ -40,6 +41,12 @@ export default {
 		},
 		onLocationFocusCanceled() {
 			this.markerFocused = undefined
+		},
+		addMarker(location){
+			this.markers.push(
+          			location.geometry.location
+					// + 마커 정보
+			);
 		}
 	}
 }

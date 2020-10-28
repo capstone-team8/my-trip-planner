@@ -6,7 +6,7 @@
 				:key="index"
 				v-for="(m, index) in markers"
 				icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
-				:position="m.position"
+				:position="m"
 				:clickabble="true"
 				:draggable="false"
 			/>
@@ -25,7 +25,10 @@
 <script>
 export default {
 	name: 'Map',
-	props: { markerFocused: Object },
+	props: { 
+		markerFocused: Object,
+		markers: Array
+	},
 	data() {
 		return {
 			// Test Center 좌표
@@ -34,7 +37,7 @@ export default {
 				lng: 126.975431
 			},
 			// Markers List -> PlanMaker의 location과 통합?
-			markers: [],
+			//markers: [],
 		}
 	},
 	watch: {
@@ -56,10 +59,10 @@ export default {
 		},
 		addMarker(){
 			if (this.markerFocused) {
-       			this.markers.push({
-          			position: this.markerFocused
+       			this.markers.push(
+          			this.markerFocused
 					// + 마커 정보
-				});
+				);
 				this.markerFocused = undefined;
       		}
 
