@@ -24,7 +24,8 @@ function createPathWithHotels(input) {
 	nearestHotel(travels, hotels)
 	//id 추출해서 pathName에 저장(최종 경로)
 	getPathName(hotels)
-	console.log(pathName)
+
+	return pathName
 }
 
 function createPathWithoutHotels(input) {
@@ -36,7 +37,8 @@ function createPathWithoutHotels(input) {
 	nearestNeighbor(places)
 	//경로에서 아이디 추출
 	getPathName(places)
-	console.log(pathName)
+
+	return pathName
 }
 
 //Nearest neighbor
