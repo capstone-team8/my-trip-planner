@@ -172,7 +172,8 @@ export default {
 			requestHandler
 				.sendPutRequest('/plan/make', this.locationsSelected)
 				.then((response) => {
-					alert(response)
+					alert('성공')
+					console.log(response)
 				})
 				.catch((error) => {
 					alert('일정 생성에 실패했습니다. 다시 시도해주세요.')
