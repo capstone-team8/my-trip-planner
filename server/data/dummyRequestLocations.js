@@ -1,4 +1,4 @@
-export default [
+module.exports = [
 	{
 		business_status: 'OPERATIONAL',
 		formatted_address: '대한민국 경기도 수원시 장안구 율천동 서부로 2066 KR',
