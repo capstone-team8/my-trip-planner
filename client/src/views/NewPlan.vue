@@ -43,10 +43,11 @@ export default {
 			this.markerFocused = undefined
 		},
 		addMarker(location){
-			this.markers.push(
-          			location.geometry.location
-					// + 마커 정보
-			);
+			this.markers.push({
+				position: location.geometry.location,
+				place_id: location.place_id,
+				// + 마커 정보
+			});
 		}
 	}
 }
