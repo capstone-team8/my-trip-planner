@@ -3,8 +3,7 @@
 		<GmapMap ref="mapRef" :center="center" :zoom="16" style="width: 100%; height: 100%">
 			<div v-for="(m, index) in markers" :key="index">
 				<GmapMarker
-					v-if="m.place_id=='area'"
-					icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+					:icon="{url: require('../assets/'+m.place+'.png')}"
 					:position="m.position"
 					:clickabble="true"
 					:draggable="false"

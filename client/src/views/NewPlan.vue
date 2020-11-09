@@ -42,10 +42,10 @@ export default {
 		onLocationFocusCanceled() {
 			this.markerFocused = undefined
 		},
-		addMarker(location){
+		addMarker(location, place){
 			this.markers.push({
 				position: location.geometry.location,
-				place_id: location.place_id,
+				place: place
 				// + 마커 정보
 			});
 		}

@@ -167,13 +167,13 @@ export default {
 				}
 				if (dup == false) {
 					this.locationsSelected.push(location)
-					this.$emit('addMarker',location)
+					this.$emit('addMarker',location, place)
 					this.locationsSelected[this.locationsSelected.length - 1].field = place
 					
 				}
 			} else {
 				this.locationsSelected.push(location)
-				this.$emit('addMarker',location)	
+				this.$emit('addMarker',location, place)	
 				this.locationsSelected[this.locationsSelected.length - 1].field = place
 			}	
 		},
