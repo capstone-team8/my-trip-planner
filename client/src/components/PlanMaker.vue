@@ -29,7 +29,7 @@
 								</div>
 								<div class="table-expand-buttons">
 									<vs-tooltip>
-										<vs-button v-on:click="add(location, 'area')" gradient success icon>
+										<vs-button v-on:click="add(location, 'tour')" gradient success icon>
 											<i class="bx bxs-map"></i>
 										</vs-button>
 										<template #tooltip>
@@ -90,7 +90,7 @@
 				</template>
 			</vs-table>
 		</div>
-		<vs-button class="button-make" v-on:click="create(locationsSelected)" flat :active="true">
+		<vs-button class="button-make" v-on:click="create" flat :active="true">
 			일정 생성
 		</vs-button>
 	</div>
@@ -121,7 +121,7 @@ export default {
 			if (!this.searchInput.length) return
 
 			requestHandler
-				.sendRequest(this.searchInput)
+				.sendGetRequest('/location/search', { text: this.searchInput })
 				.then((response) => {
 					this.locations = response.locations
 
@@ -158,26 +158,29 @@ export default {
 		},
 		add(location, place) {
 			var dup = false
-			if (this.locationsSelected.length != 0) {
-				for (var i = 0; i < this.locationsSelected.length; i++) {
-					if (!this.locationsSelected[i].place_id.indexOf(location.place_id)) {
-						dup = true
-						break
-					}
-				}
-				if (dup == false) {
-					this.locationsSelected.push(location)
-					this.$emit('addMarker',location, place)
-					this.locationsSelected[this.locationsSelected.length - 1].field = place
-					
-				}
-			} else {
-				this.locationsSelected.push(location)
-				this.$emit('addMarker',location, place)	
-				this.locationsSelected[this.locationsSelected.length - 1].field = place
-			}	
+			if (this.locationsSelected.length != 0) {	
+				// 중복 검사
+				for (var el of this.locationsSelected) if (!el.place_id.indexOf(location.place_id)) return
+			}
+
+			location.type = place
+			this.$emit('addMarker',location, place)	
+			this.locationsSelected.push(location)
 		},
-		create(locationsSelected) {}
+		// 서버에 Plan make request 전달
+		create() {
+			console.log(this.locationsSelected)
+			requestHandler
+				.sendPutRequest('/plan/make', this.locationsSelected)
+				.then((response) => {
+					alert('성공')
+					console.log(response)
+				})
+				.catch((error) => {
+					alert('일정 생성에 실패했습니다. 다시 시도해주세요.')
+					console.error(error)
+				})
+		}
 	}
 }
 </script>
