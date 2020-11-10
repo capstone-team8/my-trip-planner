@@ -6,6 +6,7 @@
 					:icon="{url: require('../assets/'+m.type+'.png')}"
 					:position="m.position"
 					:clickabble="true"
+					@click="setPlace(m.position)"
 					:draggable="false"
 				/>
 			</div>
