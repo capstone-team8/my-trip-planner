@@ -164,7 +164,7 @@ export default {
 			}
 
 			location.type = place
-			this.$emit('addMarker',location, place)	
+			this.$emit('addMarker',location)	
 			this.locationsSelected.push(location)
 		},
 		// 서버에 Plan make request 전달

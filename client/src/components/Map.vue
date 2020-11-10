@@ -3,7 +3,7 @@
 		<GmapMap ref="mapRef" :center="center" :zoom="16" style="width: 100%; height: 100%">
 			<div v-for="(m, index) in markers" :key="index">
 				<GmapMarker
-					:icon="{url: require('../assets/'+m.place+'.png')}"
+					:icon="{url: require('../assets/'+m.type+'.png')}"
 					:position="m.position"
 					:clickabble="true"
 					:draggable="false"
