@@ -36,8 +36,6 @@ export default {
 				lat: 37.293974,
 				lng: 126.975431
 			},
-			// Markers List -> PlanMaker의 location과 통합?
-			//markers: [],
 		}
 	},
 	watch: {
@@ -52,10 +50,20 @@ export default {
 	},
 	methods: {
 		setPlace(place) {
-			this.$refs.mapRef.$mapPromise.then((map) => {
+			if(this.markers.length > 0){
+				const bounds = new google.maps.LatLngBounds()
+				for (let m of this.markers){
+					bounds.extend(m.position)
+				}
+				bounds.extend(place)
+				this.$refs.mapRef.fitBounds(bounds);
+			}
+			else{
+				this.$refs.mapRef.$mapPromise.then((map) => {
 				map.panTo(place); // 맵 이동
 				map.setZoom(17);
-			})
+				})
+			}
 		}
 	}
 }
