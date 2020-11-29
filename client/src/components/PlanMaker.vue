@@ -15,7 +15,7 @@
 				</template>
 				<template v-if="locations.length" #tbody>
 					<vs-tr :key="location.place_id" v-for="location in locations">
-						<vs-td @click="toggleLocation(location)">
+						<vs-td @click="toggleLocation(location)" class="test">
 							{{ location.name }}
 						</vs-td>
 						<template #expand>
@@ -123,6 +123,7 @@ export default {
 			requestHandler
 				.sendGetRequest('/location/search', { text: this.searchInput })
 				.then((response) => {
+
 					this.locations = response.locations
 
 					if (!this.locations.length) {
