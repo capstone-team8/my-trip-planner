@@ -15,7 +15,6 @@
 				:position= this.markerFocused
 				:clickabble="true"
 				:draggable="false"
-
 			/>
 		</GmapMap>
 	</div>
@@ -27,6 +26,7 @@ export default {
 	props: { 
 		markerFocused: Object,
 		markers: Array,
+		// 순서리스트 추가
 	},
 	data() {
 		return {
@@ -47,25 +47,34 @@ export default {
 		}
 	},
 	methods: {
-		showFocused() {
+		showFocused() { // 마커 리스트 표시
 			const bounds = new google.maps.LatLngBounds()
-			for (let m of this.markers){
-				bounds.extend(m.position)
+			if(this.markers.length >1){
+				for (let m of this.markers){
+					bounds.extend(m.position)
+				}
+				this.$refs.mapRef.fitBounds(bounds);
 			}
-			this.$refs.mapRef.fitBounds(bounds);
-
-			if(this.markers.length <= 1){
-				this.$refs.mapRef.$mapPromise.then((map) => {
-					map.setZoom(17);
-				})
+			else if(this.markers.length == 1){
+				for (let m of this.markers){
+					this.$refs.mapRef.$mapPromise.then((map) => {
+						map.panTo(m.position); // 맵 이동
+						map.setZoom(17);
+					})
+				}
 			}
+			
 		},
-		setFocused(place){
+		setFocused(place){ // 마커 하나 표시
 			this.$refs.mapRef.$mapPromise.then((map) => {
 				map.panTo(place); // 맵 이동
 				map.setZoom(17);
 			})
+		},
+		addRoute(){ // 루트 표시 함수
+		
 		}
+		
 	}
 }
 </script>
@@ -75,4 +84,5 @@ export default {
 	width: 100%;
 	height: 100%;
 }
+
 </style>
