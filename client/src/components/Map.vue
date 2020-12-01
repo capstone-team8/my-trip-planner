@@ -3,16 +3,15 @@
 		<GmapMap ref="mapRef" :center="center" :zoom="16" style="width: 100%; height: 100%">
 			<div v-for="(m, index) in markers" :key="index">
 				<GmapMarker
-					:icon="{url: require('../assets/'+m.type+'.png')}"
+					icon="https://maps.gstatic.com/mapfiles/ms2/micons/blue-pushpin.png"
 					:position="m.position"
 					:clickabble="true"
-					@click="setPlace(m.position)"
 					:draggable="false"
 				/>
 			</div>
 			<GmapMarker
 				v-if="this.markerFocused!=undefined"
-				icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+				icon="https://maps.gstatic.com/mapfiles/ms2/micons/red-pushpin.png"
 				:position= this.markerFocused
 				:clickabble="true"
 				:draggable="false"
@@ -41,29 +40,31 @@ export default {
 	watch: {
 		markerFocused: function() {
 			if (this.markerFocused) {
-				this.setPlace(this.markerFocused)
+				this.setFocused(this.markerFocused)
 			} else {
-        // TODO focus canceled
-        console.log('focus canceled')
-      }
+				this.showFocused()
+     		}
 		}
 	},
 	methods: {
-		setPlace(place) {
-			if(this.markers.length > 0){
-				const bounds = new google.maps.LatLngBounds()
-				for (let m of this.markers){
-					bounds.extend(m.position)
-				}
-				bounds.extend(place)
-				this.$refs.mapRef.fitBounds(bounds);
+		showFocused() {
+			const bounds = new google.maps.LatLngBounds()
+			for (let m of this.markers){
+				bounds.extend(m.position)
 			}
-			else{
+			this.$refs.mapRef.fitBounds(bounds);
+
+			if(this.markers.length <= 1){
 				this.$refs.mapRef.$mapPromise.then((map) => {
-				map.panTo(place); // 맵 이동
-				map.setZoom(17);
+					map.setZoom(17);
 				})
 			}
+		},
+		setFocused(place){
+			this.$refs.mapRef.$mapPromise.then((map) => {
+				map.panTo(place); // 맵 이동
+				map.setZoom(17);
+			})
 		}
 	}
 }
