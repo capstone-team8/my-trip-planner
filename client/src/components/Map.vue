@@ -17,6 +17,7 @@
 				:draggable="false"
 			/>
 		</GmapMap>
+		<button @click = "getRoute">Add route</button>
 	</div>
 </template>
 
@@ -35,6 +36,9 @@ export default {
 				lat: 37.293974,
 				lng: 126.975431
 			},
+			directionsService:null,
+			directionsDisplay:null,
+			directionsDisplay:null
 		}
 	},
 	watch: {
@@ -73,10 +77,27 @@ export default {
 		},
 		addRoute(){ // 루트 표시 함수
 		
-		}
-		
-	}
+		},
+		getRoute(){
+			this.directionsService = new google.maps.DirectionsServic
+			this.directionsDisplay = new google.maps.DirectionsRenderer()
+			this.directionsDisplay.setMap(this.$refs.mapRef.$mapObject)
+			var vm = this
+			vm.directionsService.route({
+				origin: '{lat:37.293974,lng:126.975431}', // Can be coord or also a search query 6.9271,79.8612
+				destination:'{lat:37.5881865,lng:126.9925252}' ,//6.9934° N, 81.0550°
+				travelMode: 'DRIVING'
+			}, function (response, status) {
+				if (status === 'OK') {
+					vm.directionsDisplay.setDirections(response) // draws the polygon to the map
+				} else {
+					console.log('Directions request failed due to ' + status)
+				}
+			})
+    	}
+	},
 }
+
 </script>
 
 <style scoped>
