@@ -60,7 +60,7 @@ export default {
 	},
 	methods: {
 		proceed() {
-			this.$emit('moveToSecond')
+			this.$emit('moveToSecond', {nights: parseInt(this.nights)})
 		}
 	}
 }
