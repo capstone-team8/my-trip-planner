@@ -5,7 +5,15 @@
 				<vs-row class="fullHeight">
 					<vs-col class="fullHeight" w="6" sm="12">
 						<vs-row class="fullHeight" align="center" justify="center">
-							<PlanMaker class="planMaker" @locationFocused="onLocationFocused" @locationFocusCanceled="onLocationFocusCanceled" />
+							<PlanOptions v-if="page == 1" class="planMaker" @moveToSecond="moveToSecond" />
+							<PlanMaker
+								v-if="page == 2"
+								class="planMaker"
+								:locationsSelectedData="locationsSelected"
+								@locationFocused="onLocationFocused"
+								@locationFocusCanceled="onLocationFocusCanceled"
+								@moveToFirst="page = 1"
+							/>
 						</vs-row>
 					</vs-col>
 					<vs-col class="fullHeight" w="6" sm="12">
@@ -20,6 +28,7 @@
 </template>
 
 <script>
+import PlanOptions from '../components/PlanOptions'
 import PlanMaker from '../components/PlanMaker'
 import Map from '../components/Map'
 
@@ -27,10 +36,13 @@ export default {
 	name: 'NewPlan',
 	data: function() {
 		return {
-			markerFocused: undefined
+			markerFocused: undefined,
+			page: 1,
+			locationsSelected: []
 		}
 	},
 	components: {
+		PlanOptions,
 		PlanMaker,
 		Map
 	},
@@ -40,6 +52,12 @@ export default {
 		},
 		onLocationFocusCanceled() {
 			this.markerFocused = undefined
+		},
+		moveToSecond(locationsData) {
+			if(locationsData) {
+				this.locationsSelected = locationsData
+			}
+			this.page = 2
 		}
 	}
 }

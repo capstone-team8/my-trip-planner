@@ -93,9 +93,19 @@
 				</template>
 			</vs-table>
 		</div>
-		<vs-button class="button-make" v-on:click="create" flat :active="true">
-			일정 생성
-		</vs-button>
+		<vs-row justify="space-between" class="button-row">
+			<vs-button icon dark @click="back">
+				<i class="bx bx-arrow-back" />
+			</vs-button>
+			<div class="button-group">
+				<vs-button danger @click="resetData">
+					초기화
+				</vs-button>
+				<vs-button v-on:click="create" gradient>
+					<i class="bx bxs-magic-wand" /> 일정 생성
+				</vs-button>
+			</div>
+		</vs-row>
 	</div>
 </template>
 
@@ -112,6 +122,9 @@ export default {
 			locationsSelected: [],
 			locationFocused: undefined
 		}
+	},
+	props: {
+		locationsSelectedData: Array
 	},
 	methods: {
 		search() {
@@ -167,6 +180,18 @@ export default {
 					alert('일정 생성에 실패했습니다. 다시 시도해주세요.')
 					console.error(error)
 				})
+		},
+		// 데이터 초기화
+		resetData() {
+			Object.assign(this.$data, this.$options.data())
+		},
+		back() {
+			this.$emit('moveToFirst', this.locationsSelected)
+		}
+	},
+	mounted: function() {
+		if (this.locationsSelectedData) {
+			this.locationsSelected = this.locationsSelectedData
 		}
 	}
 }
@@ -191,9 +216,13 @@ export default {
 	overflow: auto;
 }
 
-.button-make {
-	width: 7em;
-	align-self: flex-end;
+.button-group {
+	display: flex;
+	flex-direction: row;
+}
+
+.button-row {
+	margin-top: 1rem;
 }
 
 td {
