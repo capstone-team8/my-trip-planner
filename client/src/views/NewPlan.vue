@@ -9,7 +9,7 @@
 							<PlanMaker
 								v-if="page == 2"
 								class="planMaker"
-								:locationsSelectedData="locationsSelected"
+								:planOptions="planOptions"
 								@locationFocused="onLocationFocused"
 								@locationFocusCanceled="onLocationFocusCanceled"
 								@addMarker="addMarker"
@@ -39,6 +39,7 @@ export default {
 		return {
 			markerFocused: undefined,
 			page: 1,
+			planOptions: undefined,
 			locationsSelected: [],
 			markers: []
 		}
@@ -55,9 +56,9 @@ export default {
 		onLocationFocusCanceled() {
 			this.markerFocused = undefined
 		},
-		moveToSecond(locationsData) {
-			if (locationsData) {
-				this.locationsSelected = locationsData
+		moveToSecond(planOptions) {
+			if (planOptions) {
+				this.planOptions = planOptions
 			}
 			this.page = 2
 		},

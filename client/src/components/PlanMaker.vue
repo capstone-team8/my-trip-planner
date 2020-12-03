@@ -124,7 +124,7 @@ export default {
 		}
 	},
 	props: {
-		locationsSelectedData: Array
+		planOptions: Object
 	},
 	methods: {
 		search() {
@@ -160,19 +160,23 @@ export default {
 		},
 		add(location, place) {
 			var dup = false
-			if (this.locationsSelected.length != 0) {	
+			if (this.locationsSelected.length != 0) {
 				// 중복 검사
 				for (var el of this.locationsSelected) if (!el.place_id.indexOf(location.place_id)) return
 			}
 
 			location.type = place
-			this.$emit('addMarker',location)	
+			this.$emit('addMarker', location)
 			this.locationsSelected.push(location)
 		},
 		// 서버에 Plan make request 전달
 		create() {
+			const days = this.planOptions.nights + 1
 			requestHandler
-				.sendPutRequest('/plan/make', this.locationsSelected)
+				.sendPutRequest('/plan/make', {
+					places: this.locationsSelected,
+					days: days
+				})
 				.then((response) => {
 					alert('성공')
 					console.log(response)
@@ -188,11 +192,6 @@ export default {
 		},
 		back() {
 			this.$emit('moveToFirst', this.locationsSelected)
-		}
-	},
-	mounted: function() {
-		if (this.locationsSelectedData) {
-			this.locationsSelected = this.locationsSelectedData
 		}
 	}
 }
