@@ -42,10 +42,8 @@
 				</vs-table>
 			</vs-col>
 		</vs-row>
-		<vs-row justify="flex-end">
-			<vs-button @click="proceed" icon>
-				<i class="bx bx-right-arrow-alt" /> 장소 등록
-			</vs-button>
+		<vs-row justify="flex-end" class="button-row">
+			<vs-button @click="proceed" icon> <i class="bx bx-right-arrow-alt" /> 장소 등록 </vs-button>
 		</vs-row>
 	</div>
 </template>
@@ -54,13 +52,13 @@
 export default {
 	data: function() {
 		return {
-			nights: 2,
+			nights: 1,
 			isHotel: 0
 		}
 	},
 	methods: {
 		proceed() {
-			this.$emit('moveToSecond', {nights: parseInt(this.nights)})
+			this.$emit('moveToSecond', { planOptions: { nights: parseInt(this.nights) } })
 		}
 	}
 }
@@ -94,6 +92,10 @@ h2 {
 
 .vs-table__td {
 	font-size: 0.9rem;
+}
+
+.button-row {
+	margin-top: 1rem;
 }
 </style>
 <style>

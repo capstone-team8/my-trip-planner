@@ -10,10 +10,20 @@
 								v-if="page == 2"
 								class="planMaker"
 								:planOptions="planOptions"
+								:locationsSelectedData="locationsSelected"
 								@locationFocused="onLocationFocused"
 								@locationFocusCanceled="onLocationFocusCanceled"
 								@addMarker="addMarker"
-								@moveToFirst="page = 1"
+								@moveToFirst="moveToFirst"
+								@planMade="onPlanMade"
+							/>
+							<PlanResult
+								v-if="page == 3"
+								class="planMaker"
+								:planData="planData"
+								@moveToSecond="moveToSecond"
+								@locationFocused="onLocationFocused"
+								@locationFocusCanceled="onLocationFocusCanceled"
 							/>
 						</vs-row>
 					</vs-col>
@@ -31,6 +41,7 @@
 <script>
 import PlanOptions from '../components/PlanOptions'
 import PlanMaker from '../components/PlanMaker'
+import PlanResult from '../components/PlanResult'
 import Map from '../components/Map'
 
 export default {
@@ -41,12 +52,14 @@ export default {
 			page: 1,
 			planOptions: undefined,
 			locationsSelected: [],
-			markers: []
+			markers: [],
+			planData: undefined
 		}
 	},
 	components: {
 		PlanOptions,
 		PlanMaker,
+		PlanResult,
 		Map
 	},
 	methods: {
@@ -56,11 +69,38 @@ export default {
 		onLocationFocusCanceled() {
 			this.markerFocused = undefined
 		},
-		moveToSecond(planOptions) {
-			if (planOptions) {
-				this.planOptions = planOptions
+		moveToFirst(data) {
+			if (data && data.locationsSelected) {
+				this.locationsSelected = data.locationsSelected
 			}
+
+			this.page = 1
+		},
+		moveToSecond(data) {
+			if (data) {
+				if (data.planOptions) {
+					this.planOptions = data.planOptions
+				}
+
+				if (data.locationsSelected) {
+					this.locationsSelected = data.locationsSelected
+				}
+			}
+
 			this.page = 2
+		},
+		onPlanMade(data) {
+			if (data) {
+				if (data.planData) {
+					this.planData = data.planData
+				}
+
+				if (data.locationsSelected) {
+					this.locationsSelected = data.locationsSelected
+				}
+			}
+
+			this.page = 3
 		},
 		addMarker(location) {
 			this.markers.push({

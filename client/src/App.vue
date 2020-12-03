@@ -30,10 +30,15 @@ export default {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	text-align: center;
+	cursor: default;
 }
 
 body {
 	background: rgba(var(--vs-gray-3));
+}
+
+.right {
+	text-align: right;
 }
 
 .fullHeight {
@@ -59,6 +64,10 @@ body {
 	border-color: rgba(var(--vs-gray-3), 1);
 	border-width: 3px;
 	border-style: solid;
+}
+
+.cursor-pointer {
+	cursor: pointer;
 }
 
 ::-webkit-scrollbar {

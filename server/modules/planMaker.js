@@ -65,8 +65,8 @@ function createPathWithoutHotels(input, k) {
 	path = nearestNeighbor(centroidsplaces, distanceMatrix)
 
 	clusterPath = getPathName(path)
-	//경로에 따라 클러스터 재정렬 및 클러스터 내부경로 설정
-	cluster = clusterRearrange(cluster, clusterPath, centroids)
+	// TODO경로에 따라 클러스터 재정렬 및 클러스터 내부경로 설정
+	// cluster = clusterRearrange(cluster, clusterPath, centroids)
 	for (var i = 0; i < cluster.length; i++) {
 		finalPath.push([])
 		for (var j = 0; j < cluster[i].length; j++) {

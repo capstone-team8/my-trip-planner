@@ -1,5 +1,8 @@
 <template>
 	<div class="flex-box">
+		<h2>
+			여행 장소 등록
+		</h2>
 		<vs-input icon-after v-model="searchInput" @keyup.enter="search" placeholder="장소 검색">
 			<template #icon>
 				<i class="bx bx-search" />
@@ -16,7 +19,7 @@
 				<template v-if="locations.length" #tbody>
 					<vs-tr :key="location.place_id" v-for="location in locations">
 						<vs-td>
-							<div class="td-title" @click="toggleLocation(location)">
+							<div class="td-title cursor-pointer" @click="toggleLocation(location)">
 								{{ location.name }}
 							</div>
 							<div
@@ -85,9 +88,12 @@
 					여행할 장소를 등록해주세요.
 				</template>
 				<template #tbody>
-					<vs-tr :key="location.place_id" v-for="location in locationsSelected">
+					<vs-tr :key="location.place_id" v-for="location in locationsSelected" class="cursor-pointer" @click="toggleLocation(location)">
 						<vs-td>
 							{{ location.name }}
+						</vs-td>
+						<vs-td style="text-align: right;">
+							<i class="bx bx-x" @click="deleteLocation(location)" />
 						</vs-td>
 					</vs-tr>
 				</template>
@@ -124,7 +130,8 @@ export default {
 		}
 	},
 	props: {
-		planOptions: Object
+		planOptions: Object,
+		locationsSelectedData: Array
 	},
 	methods: {
 		search() {
@@ -169,6 +176,10 @@ export default {
 			this.$emit('addMarker', location)
 			this.locationsSelected.push(location)
 		},
+		deleteLocation(location) {
+			const i = this.locationsSelected.indexOf(location)
+			if (i >= 0) this.locationsSelected.splice(i, 1)
+		},
 		// 서버에 Plan make request 전달
 		create() {
 			const days = this.planOptions.nights + 1
@@ -178,8 +189,8 @@ export default {
 					days: days
 				})
 				.then((response) => {
-					alert('성공')
-					console.log(response)
+					// 일정생성 성공
+					this.$emit('planMade', {planData: response, locationsSelected: this.locationsSelected})
 				})
 				.catch((error) => {
 					alert('일정 생성에 실패했습니다. 다시 시도해주세요.')
@@ -191,13 +202,23 @@ export default {
 			Object.assign(this.$data, this.$options.data())
 		},
 		back() {
-			this.$emit('moveToFirst', this.locationsSelected)
+			this.$emit('moveToFirst', {locationsSelected: this.locationsSelected})
+		}
+	},
+	mounted() {
+		if (this.locationsSelectedData) {
+			this.locationsSelected = this.locationsSelectedData
 		}
 	}
 }
 </script>
 
 <style scoped>
+h2 {
+	text-align: left;
+	margin-top: 0;
+}
+
 .vs-table-content {
 	margin-top: 1em;
 }
@@ -245,6 +266,5 @@ td {
 
 .td-title {
 	padding: 10px 12px;
-	cursor: pointer;
 }
 </style>
