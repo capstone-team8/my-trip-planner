@@ -160,12 +160,13 @@ export default {
 		},
 		add(location, place) {
 			var dup = false
-			if (this.locationsSelected.length != 0) {
+			if (this.locationsSelected.length != 0) {	
 				// 중복 검사
 				for (var el of this.locationsSelected) if (!el.place_id.indexOf(location.place_id)) return
 			}
 
 			location.type = place
+			this.$emit('addMarker',location)	
 			this.locationsSelected.push(location)
 		},
 		// 서버에 Plan make request 전달

@@ -12,13 +12,14 @@
 								:locationsSelectedData="locationsSelected"
 								@locationFocused="onLocationFocused"
 								@locationFocusCanceled="onLocationFocusCanceled"
+								@addMarker="addMarker"
 								@moveToFirst="page = 1"
 							/>
 						</vs-row>
 					</vs-col>
 					<vs-col class="fullHeight" w="6" sm="12">
 						<vs-row class="fullHeight" align="center" justify="center">
-							<Map class="map" :markerFocused="markerFocused" />
+							<Map class="map" :markers="markers" :markerFocused="markerFocused" />
 						</vs-row>
 					</vs-col>
 				</vs-row>
@@ -38,7 +39,8 @@ export default {
 		return {
 			markerFocused: undefined,
 			page: 1,
-			locationsSelected: []
+			locationsSelected: [],
+			markers: []
 		}
 	},
 	components: {
@@ -54,10 +56,17 @@ export default {
 			this.markerFocused = undefined
 		},
 		moveToSecond(locationsData) {
-			if(locationsData) {
+			if (locationsData) {
 				this.locationsSelected = locationsData
 			}
 			this.page = 2
+		},
+		addMarker(location) {
+			this.markers.push({
+				position: location.geometry.location,
+				type: location.type
+				// + 마커 정보
+			})
 		}
 	}
 }
