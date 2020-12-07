@@ -5,12 +5,31 @@
 				<vs-row class="fullHeight">
 					<vs-col class="fullHeight" w="6" sm="12">
 						<vs-row class="fullHeight" align="center" justify="center">
-							<PlanMaker class="planMaker" @locationFocused="onLocationFocused" @locationFocusCanceled="onLocationFocusCanceled" @addMarker="addMarker" />
+							<PlanOptions v-if="page == 1" class="planMaker" @moveToSecond="moveToSecond" />
+							<PlanMaker
+								v-if="page == 2"
+								class="planMaker"
+								:planOptions="planOptions"
+								:locationsSelectedData="locationsSelected"
+								@locationFocused="onLocationFocused"
+								@locationFocusCanceled="onLocationFocusCanceled"
+								@addMarker="addMarker"
+								@moveToFirst="moveToFirst"
+								@planMade="onPlanMade"
+							/>
+							<PlanResult
+								v-if="page == 3"
+								class="planMaker"
+								:planData="planData"
+								@moveToSecond="moveToSecond"
+								@locationFocused="onLocationFocused"
+								@locationFocusCanceled="onLocationFocusCanceled"
+							/>
 						</vs-row>
 					</vs-col>
 					<vs-col class="fullHeight" w="6" sm="12">
 						<vs-row class="fullHeight" align="center" justify="center">
-							<Map class="map" :markers="markers" :markerFocused="markerFocused"/>
+							<Map class="map" :markers="markers" :markerFocused="markerFocused" />
 						</vs-row>
 					</vs-col>
 				</vs-row>
@@ -20,7 +39,9 @@
 </template>
 
 <script>
+import PlanOptions from '../components/PlanOptions'
 import PlanMaker from '../components/PlanMaker'
+import PlanResult from '../components/PlanResult'
 import Map from '../components/Map'
 
 export default {
@@ -28,11 +49,17 @@ export default {
 	data: function() {
 		return {
 			markerFocused: undefined,
-			markers: []
+			page: 1,
+			planOptions: undefined,
+			locationsSelected: [],
+			markers: [],
+			planData: undefined
 		}
 	},
 	components: {
+		PlanOptions,
 		PlanMaker,
+		PlanResult,
 		Map
 	},
 	methods: {
@@ -42,12 +69,45 @@ export default {
 		onLocationFocusCanceled() {
 			this.markerFocused = undefined
 		},
-		addMarker(location){
+		moveToFirst(data) {
+			if (data && data.locationsSelected) {
+				this.locationsSelected = data.locationsSelected
+			}
+
+			this.page = 1
+		},
+		moveToSecond(data) {
+			if (data) {
+				if (data.planOptions) {
+					this.planOptions = data.planOptions
+				}
+
+				if (data.locationsSelected) {
+					this.locationsSelected = data.locationsSelected
+				}
+			}
+
+			this.page = 2
+		},
+		onPlanMade(data) {
+			if (data) {
+				if (data.planData) {
+					this.planData = data.planData
+				}
+
+				if (data.locationsSelected) {
+					this.locationsSelected = data.locationsSelected
+				}
+			}
+
+			this.page = 3
+		},
+		addMarker(location) {
 			this.markers.push({
 				position: location.geometry.location,
 				type: location.type
 				// + 마커 정보
-			});
+			})
 		}
 	}
 }
