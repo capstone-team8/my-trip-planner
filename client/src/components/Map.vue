@@ -1,6 +1,6 @@
 <template>
 	<div class="container">
-		<GmapMap ref="mapRef" :center="center" :zoom="16" style="width: 100%; height: 100%">
+		<GmapMap ref="mapRef" :center="{lat: 37.293974, lng: 126.975431}" :zoom="16" style="width: 100%; height: 100%">
 			<div v-for="(m, index) in markers" :key="index">
 				<GmapMarker
 					icon="https://maps.gstatic.com/mapfiles/ms2/micons/blue-pushpin.png"
@@ -17,11 +17,13 @@
 				:draggable="false"
 			/>
 		</GmapMap>
-		<button @click = "getRoute">Add route</button>
+		<button @click = "showRoute()">Add route</button>
 	</div>
 </template>
 
 <script>
+import {gmapApi} from 'vue2-google-maps';
+
 export default {
 	name: 'Map',
 	props: { 
@@ -31,16 +33,19 @@ export default {
 	},
 	data() {
 		return {
-			// Test Center 좌표
-			center: {
-				lat: 37.293974,
-				lng: 126.975431
-			},
-			directionsService:null,
-			directionsDisplay:null,
-			directionsDisplay:null
-		}
+			directionsService: null,
+      		directionsDisplay: null
+		};
 	},
+	mounted() {
+    	this.$gmapApiPromiseLazy().then(() => {
+			const _self = this;
+			this.directionsService = new google.maps.DirectionsService();
+			this.directionsDisplay = new google.maps.DirectionsRenderer({
+				map: this.$refs.mapRef.$mapObject,
+			});
+        });
+  	},
 	watch: {
 		markerFocused: function() {
 			if (this.markerFocused) {
@@ -75,26 +80,22 @@ export default {
 				map.setZoom(17);
 			})
 		},
-		addRoute(){ // 루트 표시 함수
-		
-		},
-		getRoute(){
-			this.directionsService = new google.maps.DirectionsServic
-			this.directionsDisplay = new google.maps.DirectionsRenderer()
-			this.directionsDisplay.setMap(this.$refs.mapRef.$mapObject)
-			var vm = this
-			vm.directionsService.route({
-				origin: '{lat:37.293974,lng:126.975431}', // Can be coord or also a search query 6.9271,79.8612
-				destination:'{lat:37.5881865,lng:126.9925252}' ,//6.9934° N, 81.0550°
-				travelMode: 'DRIVING'
-			}, function (response, status) {
-				if (status === 'OK') {
-					vm.directionsDisplay.setDirections(response) // draws the polygon to the map
-				} else {
-					console.log('Directions request failed due to ' + status)
-				}
-			})
-    	}
+		showRoute(){
+			this.$gmapApiPromiseLazy().then(() => {
+				const _self = this;
+				this.directionsService.route({
+					origin: {lat:41.8902102, lng:12.4922309},
+					destination: {lat:41.8991632, lng:12.4730739},
+					travelMode: 'DRIVING',
+				}, (response, status) => {
+					if (status === 'OK') {
+						_self.directionsDisplay.setDirections(response);
+					} else {
+						window.alert('Directions request failed due to ' + status);
+					}
+				})
+			});
+        },
 	},
 }
 
