@@ -4,7 +4,7 @@
 			<div v-for="(m, index) in markers" :key="index">
 				<GmapMarker
 					icon="https://maps.gstatic.com/mapfiles/ms2/micons/blue-pushpin.png"
-					:position="m.position"
+					:position="m.location"
 					:clickabble="true"
 					:draggable="false"
 				/>
@@ -58,16 +58,16 @@ export default {
 	methods: {
 		showFocused() { // 마커 리스트 표시
 			const bounds = new google.maps.LatLngBounds()
-			if(this.markers.length >1){
+			if(this.markers.length > 1){
 				for (let m of this.markers){
-					bounds.extend(m.position)
+					bounds.extend(m.location)
 				}
 				this.$refs.mapRef.fitBounds(bounds);
 			}
 			else if(this.markers.length == 1){
 				for (let m of this.markers){
 					this.$refs.mapRef.$mapPromise.then((map) => {
-						map.panTo(m.position); // 맵 이동
+						map.panTo(m.location); // 맵 이동
 						map.setZoom(17);
 					})
 				}
@@ -84,8 +84,9 @@ export default {
 			this.$gmapApiPromiseLazy().then(() => {
 				const _self = this;
 				this.directionsService.route({
-					origin: {lat:41.8902102, lng:12.4922309},
-					destination: {lat:41.8991632, lng:12.4730739},
+					origin: this.markers[0].location, //{lat: this.markers[0], lng:12.4},
+					destination: this.markers[2].location,
+					waypoints: [this.markers[1]],
 					travelMode: 'DRIVING',
 				}, (response, status) => {
 					if (status === 'OK') {
@@ -95,7 +96,8 @@ export default {
 					}
 				})
 			});
-        },
+		},
+		
 	},
 }
 

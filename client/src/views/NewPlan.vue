@@ -102,11 +102,10 @@ export default {
 
 			this.page = 3
 		},
-		addMarker(location) {
+		addMarker(position) {
 			this.markers.push({
-				position: location.geometry.location,
-				type: location.type
-				// + 마커 정보
+				location: position.geometry.location,
+				stopover: true
 			})
 		}
 	}
