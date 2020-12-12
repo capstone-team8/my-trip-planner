@@ -178,7 +178,10 @@ export default {
 		},
 		deleteLocation(location) {
 			const i = this.locationsSelected.indexOf(location)
-			if (i >= 0) this.locationsSelected.splice(i, 1)
+			if (i >= 0) {
+				this.locationsSelected.splice(i, 1)
+				this.$emit('deleteMarker')
+			}
 		},
 		// 서버에 Plan make request 전달
 		create() {

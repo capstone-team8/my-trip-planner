@@ -52,7 +52,7 @@
 export default {
 	data: function() {
 		return {
-			nights: 1,
+			nights: 0,
 			isHotel: 0
 		}
 	},

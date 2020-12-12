@@ -14,6 +14,7 @@
 								@locationFocused="onLocationFocused"
 								@locationFocusCanceled="onLocationFocusCanceled"
 								@addMarker="addMarker"
+								@deleteMarker='deleteMarker'
 								@moveToFirst="moveToFirst"
 								@planMade="onPlanMade"
 							/>
@@ -107,6 +108,9 @@ export default {
 				location: position.geometry.location,
 				stopover: true
 			})
+		},
+		deleteMarker(i){
+			this.markers.splice(i, 1)
 		}
 	}
 }
