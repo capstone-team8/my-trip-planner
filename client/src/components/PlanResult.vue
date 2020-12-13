@@ -15,6 +15,9 @@
 								{{ place.name }}
 							</vs-td>
 						</vs-tr>
+						<vs-button v-on:click="selectPlaces(places)" gradient>
+							<i class="bx bxs-magic-wand" /> 일정 생성
+						</vs-button>
 					</template>
 				</vs-table>
 			</vs-col>
@@ -53,6 +56,9 @@ export default {
 		},
 		back() {
 			this.$emit('moveToSecond')
+		},
+		selectPlaces(plan){
+			this.$emit('selectDay',plan)
 		}
 	}
 }

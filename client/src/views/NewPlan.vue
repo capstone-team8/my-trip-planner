@@ -25,12 +25,19 @@
 								@moveToSecond="moveToSecond"
 								@locationFocused="onLocationFocused"
 								@locationFocusCanceled="onLocationFocusCanceled"
+								@selectDay="selectDay"
 							/>
 						</vs-row>
 					</vs-col>
 					<vs-col class="fullHeight" w="6" sm="12">
 						<vs-row class="fullHeight" align="center" justify="center">
-							<Map class="map" :markers="markers" :markerFocused="markerFocused" />
+							<Map 
+								ref="map"
+								class="map" 
+								:markers="markers" 
+								:markerFocused="markerFocused" 
+								:selectedPlaces="selectedPlaces"
+							/>
 						</vs-row>
 					</vs-col>
 				</vs-row>
@@ -54,7 +61,8 @@ export default {
 			planOptions: undefined,
 			locationsSelected: [],
 			markers: [],
-			planData: undefined
+			planData: undefined,
+			selectedPlaces: []
 		}
 	},
 	components: {
@@ -111,6 +119,9 @@ export default {
 		},
 		deleteMarker(i){
 			this.markers.splice(i, 1)
+		},
+		selectDay(plan){
+			this.$refs.map.showRoute(plan)
 		}
 	}
 }

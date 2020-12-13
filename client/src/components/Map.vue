@@ -17,7 +17,7 @@
 				:draggable="false"
 			/>
 		</GmapMap>
-		<button @click = "showRoute()">Add route</button>
+		<button @click = "showRoute(markers)">Add route</button>
 	</div>
 </template>
 
@@ -27,9 +27,9 @@ import {gmapApi} from 'vue2-google-maps';
 export default {
 	name: 'Map',
 	props: { 
-		markerFocused: Object,
 		markers: Array,
-		// 순서리스트 추가
+		markerFocused: Object,
+		selectedPlaces: Array,
 	},
 	data() {
 		return {
@@ -53,7 +53,7 @@ export default {
 			} else {
 				this.showFocused()
      		}
-		}
+		},
 	},
 	methods: {
 		showFocused() { // 마커 리스트 표시
@@ -80,13 +80,13 @@ export default {
 				map.setZoom(17);
 			})
 		},
-		showRoute(){
+		showRoute(places){
 			this.$gmapApiPromiseLazy().then(() => {
 				const _self = this;
 				this.directionsService.route({
-					origin: this.markers[0].location, //{lat: this.markers[0], lng:12.4},
-					destination: this.markers[2].location,
-					waypoints: [this.markers[1]],
+					origin: places[0].location, //{lat: this.markers[0], lng:12.4},
+					destination: places[places.length-1].location,
+					waypoints: places.slice(1,places.length-1),
 					travelMode: 'DRIVING',
 				}, (response, status) => {
 					if (status === 'OK') {
