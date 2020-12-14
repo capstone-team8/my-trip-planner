@@ -203,6 +203,7 @@ export default {
 		// 데이터 초기화
 		resetData() {
 			Object.assign(this.$data, this.$options.data())
+			this.$emit('resetData', {locationsSelected: this.locationsSelected})
 		},
 		back() {
 			this.$emit('moveToFirst', {locationsSelected: this.locationsSelected})

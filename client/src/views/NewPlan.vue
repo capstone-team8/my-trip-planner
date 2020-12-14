@@ -16,6 +16,7 @@
 								@addMarker="addMarker"
 								@deleteMarker='deleteMarker'
 								@moveToFirst="moveToFirst"
+								@resetData="resetData"
 								@planMade="onPlanMade"
 							/>
 							<PlanResult
@@ -34,7 +35,7 @@
 							<Map 
 								ref="map"
 								class="map" 
-								:markers="markers" 
+								:locationsSelected="locationsSelected" 
 								:markerFocused="markerFocused" 
 							/>
 						</vs-row>
@@ -76,11 +77,17 @@ export default {
 		onLocationFocusCanceled() {
 			this.markerFocused = undefined
 		},
+		resetData(data){
+			if (data && data.locationsSelected) {
+				this.locationsSelected = data.locationsSelected
+				this.$refs.map.directionsDisplay.setMap(null)
+				this.markerFocused = undefined
+			}
+		},
 		moveToFirst(data) {
 			if (data && data.locationsSelected) {
 				this.locationsSelected = data.locationsSelected
 			}
-
 			this.page = 1
 		},
 		moveToSecond(data) {

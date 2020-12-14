@@ -1,10 +1,10 @@
 <template>
 	<div class="container">
 		<GmapMap ref="mapRef" :center="{lat: 37.293974, lng: 126.975431}" :zoom="16" style="width: 100%; height: 100%">
-			<div v-for="(m, index) in markers" :key="index">
+			<div v-for="(m, index) in locationsSelected" :key="index">
 				<GmapMarker
 					icon="https://maps.gstatic.com/mapfiles/ms2/micons/blue-pushpin.png"
-					:position="m.location"
+					:position="m.geometry.location"
 					:clickabble="true"
 					:draggable="false"
 				/>
@@ -26,7 +26,7 @@ import {gmapApi} from 'vue2-google-maps';
 export default {
 	name: 'Map',
 	props: { 
-		markers: Array,
+		locationsSelected: Array,
 		markerFocused: Object,
 	},
 	data() {
@@ -56,14 +56,14 @@ export default {
 	methods: {
 		showFocused() { // 마커 리스트 표시
 			const bounds = new google.maps.LatLngBounds()
-			if(this.markers.length > 1){
-				for (let m of this.markers){
-					bounds.extend(m.location)
+			if(this.locationsSelected.length > 1){
+				for (let m of this.locationsSelected){
+					bounds.extend(m.geometry.location)
 				}
 				this.$refs.mapRef.fitBounds(bounds);
 			}
-			else if(this.markers.length == 1){
-				for (let m of this.markers){
+			else if(this.locationsSelected.length == 1){
+				for (let m of this.locationsSelected){
 					this.$refs.mapRef.$mapPromise.then((map) => {
 						map.panTo(m.location); // 맵 이동
 						map.setZoom(17);
@@ -91,7 +91,7 @@ export default {
 			this.$gmapApiPromiseLazy().then(() => {
 				const _self = this;
 				this.directionsService.route({
-					origin: wp[0].location, //{lat: this.markers[0], lng:12.4},
+					origin: wp[0].location,
 					destination: wp[wp.length-1].location,
 					waypoints: wp.slice(1,wp.length-1),
 					travelMode: 'DRIVING',
