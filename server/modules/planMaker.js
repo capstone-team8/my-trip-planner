@@ -96,36 +96,69 @@ function createPathWithOneHotels(input) {
 	var c = []
 	var r = []
 	var dist = 0
-	for (var i = 0; i < k; i++) {
-		c[i] = new Array(2)
-		c[i][0] = hotel[0] + Math.cos((2 * Math.PI * i) / k)
-		c[i][1] = hotel[0] + Math.sin((2 * Math.PI * i) / k)
+	var inidist = new Array(places.length)
+
+	for(var i=0; i<places.length; i++){
+		inidist[i]=new Array(places.length)
 	}
-	var N = places.length
-	for (var i = 0; i < 10; i++) {
-		//iteration 횟수
-		for (var j = 0; j < N; j++) {
-			//places 별 접근
-			var min = 100000000000
-			for (var l = 0; l < k; l++) {
-				//places들을 가장 가까운 l-cluster로 분류
-				dist = Math.pow(c[l][0] - places[j][0][0], 2) + Math.pow(c[l][1] - places[j][0][1], 2)
-				console.log('dist')
-				console.log(dist)
-				if (dist < min) {
-					min = dist
-					r[j] = l
-				}
+	for (var i=0; i< places.length+1; i++){//장소간 거리 배열 생성
+		for ( var j=0; j< places.length; i++){
+			if(i==0){
+				inidist[i][j]=Math.pow(hotel[0][0][0] - places[j][0][0], 2) + Math.pow(hotel[0][0][1] - places[j][0][1], 2)//호텔과 장소간 거리 추가
+			}
+			else{
+				inidist[i-1][j]=Math.pow(places[i-1][0][0] - places[j][0][0], 2) + Math.pow(places[i-1][0][1] - places[j][0][1], 2)
 			}
 		}
+	}
+
+	for (var i = 0; i < k; i++) {
+		c[i] = new Array(2)
+	}
+
+	var cdn=parseint(places.length/k)//클러스터 당 들어갈 장소의 개수
+	var inip=0
+	var temp=0
+	var tempcn=0
+	var iniclu=0
+	while(1){
+		if(tempcn==cdn){
+			tempcn=0
+			iniclu=iniclu+1
+			inip=0
+			if(iniclu==k-1){
+				break
+			}
+		}
+		var inimin=100000000000
+		for (var i=0; i < places.length; i++){//처음에는 호텔과 가장 가까운 장소 찾아서 클러스터에, 그 다음부터는 전에 찾은 장소와 가장 가까운 장소 클러스터로
+			if(inidist[inip][i]<inimin && inidist[inip][i]>0){
+				inimin=inidist[inip][i]
+				temp=i
+			}
+		}
+		r[temp]=iniclu
+		inidist[inip][temp]=0
+		inip=temp
+		tempcn=tempcn+1
+	}
+	for(var i=0;i<k;i++){
+		if(!r[i]){
+			r[i]=cdn-1
+		}
+	}
+
+	var N = places.length
+	for (var i = 0; i < 3; i++) {
+		//iteration 횟수
 		var count = []
 		var nc = []
 		for (var j = 0; j < k; j++) {
 			//호텔 위치 고려
 			count[j] = 1
 			nc[j] = new Array(2)
-			nc[j][0] = hotel[0]
-			nc[j][1] = hotel[1]
+			nc[j][0] = hotel[0][0][0]
+			nc[j][1] = hotel[0][0][1]
 		}
 		for (var j = 0; j < N; j++) {
 			//c update(1) 같은 클러스터 좌표 전부 더해줌
@@ -140,6 +173,21 @@ function createPathWithOneHotels(input) {
 			nc[j][1] = nc[j][1] / count[j]
 		}
 		n = nc //c update
+		
+		for (var j = 0; j < N; j++) {
+			//places 별 접근
+			var min = 100000000000
+			for (var l = 0; l < k; l++) {
+				//places들을 가장 가까운 l-cluster로 분류
+				dist = Math.pow(c[l][0] - places[j][0][0], 2) + Math.pow(c[l][1] - places[j][0][1], 2)
+				console.log('dist')
+				console.log(dist)
+				if (dist < min) {
+					min = dist
+					r[j] = l
+				}
+			}
+		}
 	}
 	console.log('r')
 	console.log(r)
