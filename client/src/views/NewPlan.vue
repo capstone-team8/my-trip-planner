@@ -36,7 +36,6 @@
 								class="map" 
 								:markers="markers" 
 								:markerFocused="markerFocused" 
-								:selectedPlaces="selectedPlaces"
 							/>
 						</vs-row>
 					</vs-col>
@@ -62,7 +61,6 @@ export default {
 			locationsSelected: [],
 			markers: [],
 			planData: undefined,
-			selectedPlaces: []
 		}
 	},
 	components: {
