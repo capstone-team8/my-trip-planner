@@ -17,7 +17,6 @@
 				:draggable="false"
 			/>
 		</GmapMap>
-		<button @click = "showRoute(markers)">Add route</button>
 	</div>
 </template>
 
@@ -29,7 +28,6 @@ export default {
 	props: { 
 		markers: Array,
 		markerFocused: Object,
-		selectedPlaces: Array,
 	},
 	data() {
 		return {
