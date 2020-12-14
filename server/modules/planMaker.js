@@ -41,6 +41,49 @@ function createPathWithoutHotels(input) {
 	return pathName
 }
 
+function createPathWithOneHotels(hotel, places,k){
+	var c = []
+	var r = []
+	var dist = 0
+	for (var i = 0; i < k; i++) {
+		c[i] = new Array(2)
+		c[i][0]=hotel[0]+Math.pow(i*Math.sin(Math.PI)*360/k,2)
+		c[i][1]=hotel[0]+Math.pow(i*Math.cos(Math.PI)*360/k,2)
+	}
+	var N = places.length
+	for (var i = 0; i < 10; i++){//iteration 횟수
+		for (var j = 0; j < N; j++){//places 별 접근
+			var min=100000
+			for (var l = 0; l < k; l++){//places들을 가장 가까운 l-cluster로 분류
+				dist=Math.pow(c[l][0]-places[j][0][0],2)+Math.pow(c[l][1]-places[j][0][1],2)
+				if (dist<min){
+					min=dist
+					r[j]=l
+				}
+			}
+		}
+		var count=[]
+		var nc=[]
+		for (var j = 0; j < k; j++){//호텔 위치 고려
+			count[j]=1
+			nc[j]=new Array(2)
+			nc[j][0]=hotel[0]
+			nc[j][1]=hotel[1]
+		}
+		for (var j = 0; j < N; j++){//c update(1) 같은 클러스터 좌표 전부 더해줌
+			var clu=r[j]
+			count[clu]=count[clu]+1
+			nc[clu][0]=nc[clu][0]+places[clu][0][0]
+			nc[clu][1]=nc[clu][1]+places[clu][0][1]
+		}
+		for (var j = 0; j < k; j++){//c update(2) 클러스터 별 노드 개수로 값 나눠줌(평균)
+			nc[j][0]=nc[j][0]/count[j]
+			nc[j][1]=nc[j][1]/count[j]
+		}
+		n=nc//c update
+	}
+}
+
 //Nearest neighbor
 function nearestNeighbor(placeList) {
 	var remaining = []
