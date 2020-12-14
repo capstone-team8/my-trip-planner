@@ -5,14 +5,20 @@ const planMaker = require('../modules/planMaker')
 
 // 일정 생성 엔드포인트
 router.put('/make', (req, res) => {
-	let places = req.body
-	const planPlaceIds = planMaker.createPathWithoutHotels(places)
+	let places = req.body.places
+	const days = req.body.days
+	const planPlaceIds = planMaker.createPathWithoutHotels(places, days)
 
 	const oriIds = places.map(el => el.place_id)
 	let planPlaces = []
-	for (placeId of planPlaceIds) {
-		const i = oriIds.indexOf(placeId)
-		planPlaces.push(places[i])
+	for (dayPlaceIds of planPlaceIds) {
+		let dayPlaces = []
+		for (placeId of dayPlaceIds) {
+			const i = oriIds.indexOf(placeId)
+			dayPlaces.push(places[i])
+		}
+
+		planPlaces.push(dayPlaces)
 	}
 
 	res.status(200).json(planPlaces)
