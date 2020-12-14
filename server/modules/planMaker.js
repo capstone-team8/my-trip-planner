@@ -97,6 +97,19 @@ function createPathWithOneHotels(input) {
 	var r = []
 	var dist = 0
 	var inidist = new Array(places.length)
+	var N = places.length
+	var finalPath=[]
+
+	var cdn=parseint(places.length/k)//클러스터 당 들어갈 장소의 개수
+	var inip=0
+	var temp=0
+	var tempcn=0
+	var iniclu=1
+
+	var centroidsplaces = new Array(k)
+	var distanceMatrix = new Array(k)
+	var path = new Array(k)
+	var clusterPath = new Array(k)
 
 	for(var i=0; i<places.length; i++){
 		inidist[i]=new Array(places.length)
@@ -116,17 +129,12 @@ function createPathWithOneHotels(input) {
 		c[i] = new Array(2)
 	}
 
-	var cdn=parseint(places.length/k)//클러스터 당 들어갈 장소의 개수
-	var inip=0
-	var temp=0
-	var tempcn=0
-	var iniclu=0
 	while(1){
 		if(tempcn==cdn){
 			tempcn=0
 			iniclu=iniclu+1
 			inip=0
-			if(iniclu==k-1){
+			if(iniclu==k){
 				break
 			}
 		}
@@ -142,13 +150,12 @@ function createPathWithOneHotels(input) {
 		inip=temp
 		tempcn=tempcn+1
 	}
-	for(var i=0;i<k;i++){
+	for(var i=0;i<places.length;i++){
 		if(!r[i]){
-			r[i]=cdn-1
+			r[i]=cdn
 		}
 	}
 
-	var N = places.length
 	for (var i = 0; i < 3; i++) {
 		//iteration 횟수
 		var count = []
@@ -172,7 +179,7 @@ function createPathWithOneHotels(input) {
 			nc[j][0] = nc[j][0] / count[j]
 			nc[j][1] = nc[j][1] / count[j]
 		}
-		n = nc //c update
+		c = nc //c update
 		
 		for (var j = 0; j < N; j++) {
 			//places 별 접근
@@ -189,8 +196,34 @@ function createPathWithOneHotels(input) {
 			}
 		}
 	}
+
+	for(var i=0;i<N;i++){
+		r[j]=r[j]-1
+	}
+
 	console.log('r')
 	console.log(r)
+	
+	for(var i=0;i<N;i++){
+		centroidsplaces[r[i]].push([places[i][0][0],places[i][0][1]])
+	}
+	
+	for(var i=0;i<k;i++){
+		//클러스터간 거리 매트릭스 생성
+		distanceMatrix[i] = createDistanceMatrix(centroidsplaces)
+		//클러스터간 경로 생성
+		path[i] = nearestNeighbor(centroidsplaces, distanceMatrix)
+		clusterPath[i] = getPathName(path[i])
+	}
+	// TODO경로에 따라 클러스터 재정렬 및 클러스터 내부경로 설정
+	// cluster = clusterRearrange(cluster, clusterPath, centroids)
+	for (var i = 0; i < k; i++) {
+		finalPath.push([])
+		for (var j = 0; j < clusterPath[i].length; j++) {
+			finalPath[i].push(clusterPath[i][j])
+		}
+	}
+	return finalPath
 }
 
 //Nearest neighbor. path return
