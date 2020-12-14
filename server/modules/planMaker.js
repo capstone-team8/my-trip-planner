@@ -77,11 +77,10 @@ function createPathWithoutHotels(input, k) {
 }
 
 //1개의 숙소
-function createPathWithOneHotels(input) {
+function createPathWithOneHotels(input, k) {
 	var places = []
 	var travels = []
 	var hotel = []
-	var k = 3
 
 	//input에서 필요한 요소들만 추출
 	places = inputExtract(input)
@@ -96,31 +95,32 @@ function createPathWithOneHotels(input) {
 	var c = []
 	var r = []
 	var dist = 0
-	var inidist = new Array(places.length)
+	var inidist = new Array(places.length+1)
 	var N = places.length
 	var finalPath=[]
 
-	var cdn=parseint(places.length/k)//클러스터 당 들어갈 장소의 개수
+	var cdn=Math.floor(places.length/k)//클러스터 당 들어갈 장소의 개수
 	var inip=0
 	var temp=0
 	var tempcn=0
 	var iniclu=1
 
 	var centroidsplaces = new Array(k)
-	var distanceMatrix = new Array(k)
-	var path = new Array(k)
-	var clusterPath = new Array(k)
+	var distanceMatrix
+	var path
+	var clusterPath
+  var cluster=new Array(k)
 
-	for(var i=0; i<places.length; i++){
+	for(var i=0; i<places.length+1; i++){
 		inidist[i]=new Array(places.length)
 	}
 	for (var i=0; i< places.length+1; i++){//장소간 거리 배열 생성
-		for ( var j=0; j< places.length; i++){
+		for ( var j=0; j< places.length; j++){
 			if(i==0){
 				inidist[i][j]=Math.pow(hotel[0][0][0] - places[j][0][0], 2) + Math.pow(hotel[0][0][1] - places[j][0][1], 2)//호텔과 장소간 거리 추가
 			}
 			else{
-				inidist[i-1][j]=Math.pow(places[i-1][0][0] - places[j][0][0], 2) + Math.pow(places[i-1][0][1] - places[j][0][1], 2)
+				inidist[i][j]=Math.pow(places[i-1][0][0] - places[j][0][0], 2) + Math.pow(places[i-1][0][1] - places[j][0][1], 2)
 			}
 		}
 	}
@@ -152,9 +152,12 @@ function createPathWithOneHotels(input) {
 	}
 	for(var i=0;i<places.length;i++){
 		if(!r[i]){
-			r[i]=cdn
+			r[i]=k
 		}
 	}
+  for(var i=0;i<N;i++){
+    r[i]=r[i]-1
+  }
 
 	for (var i = 0; i < 3; i++) {
 		//iteration 횟수
@@ -180,15 +183,13 @@ function createPathWithOneHotels(input) {
 			nc[j][1] = nc[j][1] / count[j]
 		}
 		c = nc //c update
-		
+
 		for (var j = 0; j < N; j++) {
 			//places 별 접근
 			var min = 100000000000
 			for (var l = 0; l < k; l++) {
 				//places들을 가장 가까운 l-cluster로 분류
 				dist = Math.pow(c[l][0] - places[j][0][0], 2) + Math.pow(c[l][1] - places[j][0][1], 2)
-				console.log('dist')
-				console.log(dist)
 				if (dist < min) {
 					min = dist
 					r[j] = l
@@ -197,33 +198,43 @@ function createPathWithOneHotels(input) {
 		}
 	}
 
-	for(var i=0;i<N;i++){
-		r[j]=r[j]-1
-	}
-
 	console.log('r')
 	console.log(r)
-	
-	for(var i=0;i<N;i++){
-		centroidsplaces[r[i]].push([places[i][0][0],places[i][0][1]])
-	}
-	
-	for(var i=0;i<k;i++){
-		//클러스터간 거리 매트릭스 생성
-		distanceMatrix[i] = createDistanceMatrix(centroidsplaces)
-		//클러스터간 경로 생성
-		path[i] = nearestNeighbor(centroidsplaces, distanceMatrix)
-		clusterPath[i] = getPathName(path[i])
-	}
-	// TODO경로에 따라 클러스터 재정렬 및 클러스터 내부경로 설정
-	// cluster = clusterRearrange(cluster, clusterPath, centroids)
-	for (var i = 0; i < k; i++) {
-		finalPath.push([])
-		for (var j = 0; j < clusterPath[i].length; j++) {
-			finalPath[i].push(clusterPath[i][j])
-		}
-	}
-	return finalPath
+  for(var i=0;i<k;i++){
+    cluster[i]=[]
+  }
+  for(var i=0;i<N;i++){
+    cluster[r[i]].push(places[i])
+  }
+  console.log(cluster)
+
+  for (var i=0; i<k; i++){
+    centroidsplaces[i] = []
+    centroidsplaces[i].push(c[i])
+    centroidsplaces[i].push("centroid")
+    centroidsplaces[i].push(i)
+  }
+	//클러스터간 거리 매트릭스 생성
+	distanceMatrix = createDistanceMatrix(centroidsplaces)
+	//클러스터간 경로 생성
+	path = nearestNeighbor(centroidsplaces, distanceMatrix)
+
+  clusterPath = getPathName(path)
+
+  cluster = clusterRearrange(cluster, clusterPath, c)
+  console.log(cluster)
+
+  for (var i = 0; i < cluster.length; i++) {
+    finalPath.push([])
+    finalPath[i].push(hotel[0][2])
+    for (var j = 0; j < cluster[i].length; j++) {
+      finalPath[i].push(cluster[i][j][2])
+      console.log(cluster[i][j][2])
+    }
+    finalPath[i].push(hotel[0][2])
+  }
+  console.log(finalPath)
+  return finalPath
 }
 
 //Nearest neighbor. path return
