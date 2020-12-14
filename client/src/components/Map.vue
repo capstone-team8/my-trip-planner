@@ -81,12 +81,21 @@ export default {
 			})
 		},
 		showRoute(places){
+			let wp=[];
+
+			for(let place of places){
+				wp.push({
+					location: place.geometry.location,
+					stopover: true
+				})
+			}
+
 			this.$gmapApiPromiseLazy().then(() => {
 				const _self = this;
 				this.directionsService.route({
-					origin: places[0].location, //{lat: this.markers[0], lng:12.4},
-					destination: places[places.length-1].location,
-					waypoints: places.slice(1,places.length-1),
+					origin: wp[0].location, //{lat: this.markers[0], lng:12.4},
+					destination: wp[wp.length-1].location,
+					waypoints: wp.slice(1,wp.length-1),
 					travelMode: 'DRIVING',
 				}, (response, status) => {
 					if (status === 'OK') {
