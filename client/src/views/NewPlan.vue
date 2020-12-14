@@ -13,8 +13,6 @@
 								:locationsSelectedData="locationsSelected"
 								@locationFocused="onLocationFocused"
 								@locationFocusCanceled="onLocationFocusCanceled"
-								@addMarker="addMarker"
-								@deleteMarker='deleteMarker'
 								@moveToFirst="moveToFirst"
 								@resetData="resetData"
 								@planMade="onPlanMade"
@@ -27,6 +25,7 @@
 								@locationFocused="onLocationFocused"
 								@locationFocusCanceled="onLocationFocusCanceled"
 								@selectDay="selectDay"
+								@resetRoute="resetRoute"
 							/>
 						</vs-row>
 					</vs-col>
@@ -60,7 +59,6 @@ export default {
 			page: 1,
 			planOptions: undefined,
 			locationsSelected: [],
-			markers: [],
 			planData: undefined,
 		}
 	},
@@ -80,14 +78,14 @@ export default {
 		resetData(data){
 			if (data && data.locationsSelected) {
 				this.locationsSelected = data.locationsSelected
-				this.$refs.map.directionsDisplay.setMap(null)
+      			this.$refs.map.directionsDisplay.set('directions', null)
 				this.markerFocused = undefined
 			}
 		},
+		resetRoute(){
+			this.$refs.map.directionsDisplay.set('directions', null)
+		},
 		moveToFirst(data) {
-			if (data && data.locationsSelected) {
-				this.locationsSelected = data.locationsSelected
-			}
 			this.page = 1
 		},
 		moveToSecond(data) {
@@ -115,15 +113,6 @@ export default {
 			}
 
 			this.page = 3
-		},
-		addMarker(position) {
-			this.markers.push({
-				location: position.geometry.location,
-				stopover: true
-			})
-		},
-		deleteMarker(i){
-			this.markers.splice(i, 1)
 		},
 		selectDay(plan){
 			this.$refs.map.showRoute(plan)

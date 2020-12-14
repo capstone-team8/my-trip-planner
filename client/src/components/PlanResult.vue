@@ -16,10 +16,13 @@
 							</vs-td>
 						</vs-tr>
 						<vs-button v-on:click="selectPlaces(places)" gradient>
-							<i class="bx bxs-magic-wand" /> 일정 생성
+							루트 표시
 						</vs-button>
 					</template>
 				</vs-table>
+				<vs-button v-on:click="resetRoute()" gradient>
+					루트 제거
+				</vs-button>
 			</vs-col>
 		</vs-row>
 		<vs-row justify="space-between">
@@ -59,6 +62,9 @@ export default {
 		},
 		selectPlaces(plan){
 			this.$emit('selectDay',plan)
+		},
+		resetRoute(){
+			this.$emit('resetRoute')
 		}
 	}
 }

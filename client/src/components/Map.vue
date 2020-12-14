@@ -1,19 +1,72 @@
 <template>
 	<div class="container">
-		<GmapMap ref="mapRef" :center="{lat: 37.293974, lng: 126.975431}" :zoom="16" style="width: 100%; height: 100%">
+		<GmapMap ref="mapRef" :center="{lat: 40.712391, lng: -74.007222}" :zoom="16" style="width: 100%; height: 100%">
 			<div v-for="(m, index) in locationsSelected" :key="index">
 				<GmapMarker
-					icon="https://maps.gstatic.com/mapfiles/ms2/micons/blue-pushpin.png"
+					v-if="m.type=='tour'"
+					:label="{
+						text: '🚎',
+						fontSize: '30px'
+					}"
+					icon = "null"
 					:position="m.geometry.location"
-					:clickabble="true"
+					:clickabble="false"
+					:draggable="false"
+				/>
+				<GmapMarker
+					v-if="m.type=='night'"
+					:label="{
+						text: '🌆',
+						fontSize: '30px'
+					}"
+					icon = "null"
+					:position="m.geometry.location"
+					:clickabble="false"
+					:draggable="false"
+				/>
+				<GmapMarker
+					v-if="m.type=='restaurant'"
+					:label="{
+						text: '🍽️',
+						fontSize: '30px'
+					}"
+					icon = "null"
+					:position="m.geometry.location"
+					:clickabble="false"
+					:draggable="false"
+				/>
+				<GmapMarker
+					v-if="m.type=='cafe'"
+					:label="{
+						text: '☕',
+						fontSize: '30px'
+					}"
+					icon = "null"
+					:position="m.geometry.location"
+					:clickabble="false"
+					:draggable="false"
+				/>
+				<GmapMarker
+					v-if="m.type=='bar'"
+					:label="{
+						text: '🍷',
+						fontSize: '30px'
+					}"
+					icon = "null"
+					:position="m.geometry.location"
+					:clickabble="false"
 					:draggable="false"
 				/>
 			</div>
 			<GmapMarker
 				v-if="this.markerFocused!=undefined"
-				icon="https://maps.gstatic.com/mapfiles/ms2/micons/red-pushpin.png"
+				:label="{
+						text: '🏃',
+						fontSize: '20px'
+					}"
+				icon = "null"
 				:position= this.markerFocused
-				:clickabble="true"
+				:clickabble="false"
 				:draggable="false"
 			/>
 		</GmapMap>
@@ -103,8 +156,7 @@ export default {
 					}
 				})
 			});
-		},
-		
+		},	
 	},
 }
 
