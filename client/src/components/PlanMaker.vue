@@ -137,6 +137,7 @@ export default {
 			requestHandler
 				.sendGetRequest('/location/search', { text: this.searchInput })
 				.then((response) => {
+
 					this.locations = response.locations
 
 					if (!this.locations.length) {

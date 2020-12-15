@@ -20,5 +20,9 @@
   "homepage": "https://github.com/capstone-team8/my-trip-planner#readme",
   "devDependencies": {
     "concurrently": "^5.3.0"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "jsonwebtoken": "^8.5.1"
   }
 }
