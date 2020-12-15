@@ -201,12 +201,12 @@ function createPathWithOneHotels(input) {
 		console.log(path[i])
 	}
 
-  	for (var i = 0; i < cluster.length; i++) {
+  	for (var i = 0; i < path.length; i++) {
     	finalPath.push([])
     	finalPath[i].push(hotel[0][2])
-    	for (var j = 0; j < cluster[i].length; j++) {
-      	finalPath[i].push(cluster[i][j][2])
-      	console.log(cluster[i][j][2])
+    	for (var j = 0; j < path[i].length; j++) {
+      	finalPath[i].push(path[i][j][2])
+      	console.log(path[i][j][2])
     	}
     	finalPath[i].push(hotel[0][2])
   	}
