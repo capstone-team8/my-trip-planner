@@ -13,8 +13,8 @@
 								:locationsSelectedData="locationsSelected"
 								@locationFocused="onLocationFocused"
 								@locationFocusCanceled="onLocationFocusCanceled"
-								@addMarker="addMarker"
 								@moveToFirst="moveToFirst"
+								@resetData="resetData"
 								@planMade="onPlanMade"
 							/>
 							<PlanResult
@@ -24,12 +24,19 @@
 								@moveToSecond="moveToSecond"
 								@locationFocused="onLocationFocused"
 								@locationFocusCanceled="onLocationFocusCanceled"
+								@selectRoute="selectRoute"
+								@resetRoute="resetRoute"
 							/>
 						</vs-row>
 					</vs-col>
 					<vs-col class="fullHeight" w="6" sm="12">
 						<vs-row class="fullHeight" align="center" justify="center">
-							<Map class="map" :markers="markers" :markerFocused="markerFocused" />
+							<Map 
+								ref="map"
+								class="map" 
+								:locationsSelected="locationsSelected" 
+								:markerFocused="markerFocused" 
+							/>
 						</vs-row>
 					</vs-col>
 				</vs-row>
@@ -52,8 +59,7 @@ export default {
 			page: 1,
 			planOptions: undefined,
 			locationsSelected: [],
-			markers: [],
-			planData: undefined
+			planData: undefined,
 		}
 	},
 	components: {
@@ -69,11 +75,19 @@ export default {
 		onLocationFocusCanceled() {
 			this.markerFocused = undefined
 		},
-		moveToFirst(data) {
+		resetData(data){
 			if (data && data.locationsSelected) {
 				this.locationsSelected = data.locationsSelected
+      			this.$refs.map.directionsDisplay.set('directions', null)
+				this.markerFocused = undefined
+				this.$refs.map.showFocused()
 			}
-
+		},
+		resetRoute(){
+			this.$refs.map.directionsDisplay.set('directions', null)
+			this.$refs.map.showFocused()
+		},
+		moveToFirst(data) {
 			this.page = 1
 		},
 		moveToSecond(data) {
@@ -102,12 +116,8 @@ export default {
 
 			this.page = 3
 		},
-		addMarker(location) {
-			this.markers.push({
-				position: location.geometry.location,
-				type: location.type
-				// + 마커 정보
-			})
+		selectRoute(plan){
+			this.$refs.map.showRoute(plan)
 		}
 	}
 }

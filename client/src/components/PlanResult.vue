@@ -15,8 +15,14 @@
 								{{ place.name }}
 							</vs-td>
 						</vs-tr>
+						<vs-button v-on:click="selectRoute(places)" gradient>
+							루트 표시
+						</vs-button>
 					</template>
 				</vs-table>
+				<vs-button v-on:click="resetRoute()" danger>
+					루트 제거
+				</vs-button>
 			</vs-col>
 		</vs-row>
 		<vs-row justify="space-between">
@@ -53,6 +59,12 @@ export default {
 		},
 		back() {
 			this.$emit('moveToSecond')
+		},
+		selectRoute(plan){
+			this.$emit('selectRoute',plan)
+		},
+		resetRoute(){
+			this.$emit('resetRoute')
 		}
 	}
 }

@@ -26,13 +26,6 @@
 								class="table-expand"
 								v-if="locationFocused && locationFocused.place_id == location.place_id"
 							>
-								<div>
-									<vs-avatar dark>
-										<template #text>
-											image
-										</template>
-									</vs-avatar>
-								</div>
 								<div class="table-expand-buttons">
 									<vs-tooltip>
 										<vs-button v-on:click="add(location, 'tour')" gradient success icon>
@@ -51,7 +44,7 @@
 										</template>
 									</vs-tooltip>
 									<vs-tooltip>
-										<vs-button v-on:click="add(location, 'restaurant')" gradient danger icon>
+										<vs-button v-on:click="add(location, 'restaurant')" gradient color="#ff3399" icon>
 											<i class="bx bx-restaurant"></i>
 										</vs-button>
 										<template #tooltip>
@@ -67,7 +60,7 @@
 										</template>
 									</vs-tooltip>
 									<vs-tooltip>
-										<vs-button v-on:click="add(location, 'bar')" gradient dark icon>
+										<vs-button v-on:click="add(location, 'bar')" gradient color="#7d33ff" icon>
 											<i class="bx bxs-drink"></i>
 										</vs-button>
 										<template #tooltip>
@@ -179,7 +172,10 @@ export default {
 		},
 		deleteLocation(location) {
 			const i = this.locationsSelected.indexOf(location)
-			if (i >= 0) this.locationsSelected.splice(i, 1)
+			if (i >= 0) {
+				this.locationsSelected.splice(i, 1)
+				this.$emit('deleteMarker')
+			}
 		},
 		// 서버에 Plan make request 전달
 		create() {
@@ -201,6 +197,7 @@ export default {
 		// 데이터 초기화
 		resetData() {
 			Object.assign(this.$data, this.$options.data())
+			this.$emit('resetData', {locationsSelected: this.locationsSelected})
 		},
 		back() {
 			this.$emit('moveToFirst', {locationsSelected: this.locationsSelected})
