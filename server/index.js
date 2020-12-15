@@ -20,7 +20,7 @@ db.authenticate()
 db.sync()
 
 // Enable CORS requests
-app.use(cors())
+app.use(cors({ origin: true, credentials: true }))
 
 // Configure bodyParser & cookieParser
 app.use(bodyParser.urlencoded({ extended: true }))
