@@ -7,6 +7,17 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 
 const config = require('./config/key')
+const db = require('./config/database')
+
+// Test the DB connection
+db.authenticate()
+	.then(() => {
+		console.log('Database connected')
+	})
+	.catch((error) => {
+		console.error('Database connection error: ', error)
+	})
+db.sync()
 
 // Enable CORS requests
 app.use(cors())
