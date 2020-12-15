@@ -8,13 +8,20 @@ let auth = (req, res, next) => {
 	if (!token) {
 		token = req.headers.x_auth
 	}
+	if (!token) {
+		// No token
+		return res.json({
+			isAuth: false,
+			error: true
+		})
+	}
 
 	// Decode the token and find the user
 	User.findByToken(token, (err, user) => {
 		if (err) throw err
 
 		if (!user) {
-			return res.status(400).json({
+			return res.json({
 				isAuth: false,
 				error: true
 			})
