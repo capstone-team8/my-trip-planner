@@ -52,8 +52,6 @@ router.get('/auth', auth, async (req, res) => {
 			// Check if current user has the plan
 			let hasAuthority = false
 			for (const user of users) if (user.id == req.user.id) hasAuthority = true
-			// Fail if not
-			if (!hasAuthority) return res.send({ success: false })
 
 			// Set planOptions
 			const planOptions = {
@@ -93,6 +91,7 @@ router.get('/auth', auth, async (req, res) => {
 
 			return res.send({
 				success: true,
+				hasAuthority: hasAuthority,
 				planOptions: planOptions,
 				members: members,
 				locationsSelected: locationsSelected,
@@ -151,7 +150,7 @@ router.post('/', async (req, res) => {
 // Update a plan
 router.put('/', async (req, res) => {
 	// Set the general info
-	let plan = await Plan.findOne({where: {id: req.body.id}})
+	let plan = await Plan.findOne({ where: { id: req.body.id } })
 	plan.name = req.body.name
 	plan.days = req.body.days
 	plan = await plan.save()

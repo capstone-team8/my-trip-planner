@@ -49,7 +49,7 @@
 						여행 멤버
 					</template>
 					<template #tbody>
-						<vs-tr>
+						<vs-tr v-if="mode != 'view'">
 							<vs-td>
 								<vs-input v-model="searchUsername" placeholder="유저 아이디"></vs-input>
 							</vs-td>
@@ -71,7 +71,7 @@
 				</vs-table>
 			</vs-col>
 		</vs-row>
-		<vs-row justify="space-between">
+		<vs-row v-if="mode != 'view'" justify="space-between">
 			<vs-button icon dark @click="back">
 				<i class="bx bx-arrow-back" />
 			</vs-button>

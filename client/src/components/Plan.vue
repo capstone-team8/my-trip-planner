@@ -102,14 +102,17 @@ export default {
 			requestHandler
 				.sendGetRequestWithCredentials('/plan/auth', { id: this.id })
 				.then((res) => {
-					if (res.success) {
+					if (res.success && res.hasAuthority) {
+						if (this.mode == 'edit' && !res.hasAuthority) {
+							alert('소유한 일정만 편집할 수 있습니다.')
+							this.$router.replace({ name: 'NewPlan' })
+						}
+
 						// Set data with response
 						this.planOptions = res.planOptions
 						this.members = res.members
 						this.locationsSelected = res.locationsSelected
 						this.planData = res.planData
-
-						this.$refs.map.showFocused()
 					} else {
 						alert('일정 정보를 읽을 수 없습니다.')
 						this.$router.replace({ name: 'NewPlan' })
