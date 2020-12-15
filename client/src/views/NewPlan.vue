@@ -24,7 +24,7 @@
 								@moveToSecond="moveToSecond"
 								@locationFocused="onLocationFocused"
 								@locationFocusCanceled="onLocationFocusCanceled"
-								@selectDay="selectDay"
+								@selectRoute="selectRoute"
 								@resetRoute="resetRoute"
 							/>
 						</vs-row>
@@ -80,10 +80,12 @@ export default {
 				this.locationsSelected = data.locationsSelected
       			this.$refs.map.directionsDisplay.set('directions', null)
 				this.markerFocused = undefined
+				this.$refs.map.showFocused()
 			}
 		},
 		resetRoute(){
 			this.$refs.map.directionsDisplay.set('directions', null)
+			this.$refs.map.showFocused()
 		},
 		moveToFirst(data) {
 			this.page = 1
@@ -114,7 +116,7 @@ export default {
 
 			this.page = 3
 		},
-		selectDay(plan){
+		selectRoute(plan){
 			this.$refs.map.showRoute(plan)
 		}
 	}

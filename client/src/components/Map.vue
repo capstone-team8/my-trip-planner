@@ -77,7 +77,6 @@
 import {gmapApi} from 'vue2-google-maps';
 
 export default {
-	name: 'Map',
 	props: { 
 		locationsSelected: Array,
 		markerFocused: Object,
@@ -89,7 +88,7 @@ export default {
 		};
 	},
 	mounted() {
-    	this.$gmapApiPromiseLazy().then(() => {
+    	this.$gmapApiPromiseLazy().then(() => { //showRoute 작동 시, 맵에 루트 렌더링
 			const _self = this;
 			this.directionsService = new google.maps.DirectionsService();
 			this.directionsDisplay = new google.maps.DirectionsRenderer({
@@ -100,14 +99,14 @@ export default {
 	watch: {
 		markerFocused: function() {
 			if (this.markerFocused) {
-				this.setFocused(this.markerFocused)
+				this.showPlace(this.markerFocused)
 			} else {
 				this.showFocused()
      		}
 		},
 	},
 	methods: {
-		showFocused() { // 마커 리스트 표시
+		showFocused() { 
 			const bounds = new google.maps.LatLngBounds()
 			if(this.locationsSelected.length > 1){
 				for (let m of this.locationsSelected){
@@ -125,13 +124,13 @@ export default {
 			}
 			
 		},
-		setFocused(place){ // 마커 하나 표시
+		showPlace(place){ 
 			this.$refs.mapRef.$mapPromise.then((map) => {
 				map.panTo(place); // 맵 이동
 				map.setZoom(17);
 			})
 		},
-		showRoute(places){
+		showRoute(places){ // 루트 설정
 			let wp=[];
 
 			for(let place of places){
@@ -141,7 +140,7 @@ export default {
 				})
 			}
 
-			this.$gmapApiPromiseLazy().then(() => {
+			this.$gmapApiPromiseLazy().then(() => { // vue2-google-maps 루트 표시
 				const _self = this;
 				this.directionsService.route({
 					origin: wp[0].location,
@@ -152,7 +151,7 @@ export default {
 					if (status === 'OK') {
 						_self.directionsDisplay.setDirections(response);
 					} else {
-						window.alert('Directions request failed due to ' + status);
+						window.alert('루트 생성 불가. 여행지 위치를 확인해주세요.');
 					}
 				})
 			});
