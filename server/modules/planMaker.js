@@ -522,14 +522,12 @@ function clusterRearrange(cluster, clusterPath, centroids){
       tempcluster2[i],push([])
     }
   }
-  console.log("ger")
 
   for (var i=0; i<cluster.length; i++){
     tempcluster.push(cluster[clusterPath[i]])
     tempcentroids.push(centroids[clusterPath[i]])
   }
-  console.log(tempcluster)
-  console.log(tempcluster2)
+
   //클러스터의 시작점, 도착점 설정
   for (var i=0; i<tempcluster.length-1; i++){
     shortestDist = 100000
@@ -552,7 +550,85 @@ function clusterRearrange(cluster, clusterPath, centroids){
     tempcluster[i+1][preIndex] = tempcluster[i+1][0]
     tempcluster[i+1][0] = temppoint
   }
+	for (var i=0; i<tempcluster.length; i++){
+    var insidecluster = []
+    var distanceMatrix = []
+    for (var j=0; j<tempcluster[i].length-1; j++){
+      insidecluster[j] = tempcluster[i][j]
+    }
+    distanceMatrix = createDistanceMatrix(insidecluster)
+    insidecluster = nearestNeighbor(insidecluster, distanceMatrix)
+    for (var j=0; j<tempcluster[i].length-1; j++){
+       tempcluster[i][j] = insidecluster[j]
+    }
+  }
 
+  //식당 고려
+  for (var i=0; i<tempcluster.length; i++){
+  var restaurantCount = 0
+  var restaurantIndex = []
+  var changeIndex
+    for (var j=0; j<tempcluster[i].length; j++){
+      if (tempcluster[i][j][1] == 'restaurant'){
+        restaurantCount++
+        restaurantIndex.push(j)
+      }
+    }
+    if (restaurantCount == 1){
+      changeIndex = parseInt(tempcluster[i].length/2)
+      temppoint = tempcluster[i][restaurantIndex[0]]
+      tempcluster[i][restaurantIndex[0]] = tempcluster[i][changeIndex]
+      tempcluster[i][changeIndex] = temppoint
+    }
+    if (restaurantCount == 2){
+      //첫번째 식당
+      changeIndex = parseInt(tempcluster[i].length/2)
+      temppoint = tempcluster[i][restaurantIndex[0]]
+      tempcluster[i][restaurantIndex[0]] = tempcluster[i][changeIndex]
+      tempcluster[i][changeIndex] = temppoint
+      //두번째 식당
+      changeIndex = tempcluster[i].length-1
+      temppoint = tempcluster[i][restaurantIndex[1]]
+      tempcluster[i][restaurantIndex[1]] = tempcluster[i][changeIndex]
+      tempcluster[i][changeIndex] = temppoint
+    }
+    if (restaurantCount == 3){
+      //첫번째 식당
+      changeIndex = 1
+      temppoint = tempcluster[i][restaurantIndex[0]]
+      tempcluster[i][restaurantIndex[0]] = tempcluster[i][changeIndex]
+      tempcluster[i][changeIndex] = temppoint
+      //두번째 식당
+      changeIndex = parseInt(tempcluster[i].length/2)
+      temppoint = tempcluster[i][restaurantIndex[1]]
+      tempcluster[i][restaurantIndex[1]] = tempcluster[i][changeIndex]
+      tempcluster[i][changeIndex] = temppoint
+      //세번째 식당
+      changeIndex = tempcluster[i].length-1
+      temppoint = tempcluster[i][restaurantIndex[1]]
+      tempcluster[i][restaurantIndex[1]] = tempcluster[i][changeIndex]
+      tempcluster[i][changeIndex] = temppoint
+    }
+  }
+
+  //야경 고려
+  for (var i=0; i<tempcluster.length; i++){
+    var nightCount = 0
+    var nightIndex = []
+    var changeIndex
+      for (var j=0; j<tempcluster[i].length; j++){
+        if (tempcluster[i][j][1] == 'night'){
+          nightCount++
+          nightIndex.push(j)
+        }
+      }
+      for (var j=0; j<nightCount; j++){
+        changeIndex = tempcluster[i].length-1-j
+        temppoint = tempcluster[i][nightIndex[i]]
+        tempcluster[i][nightIndex[i]] = tempcluster[i][changeIndex]
+        tempcluster[i][changeIndex] = temppoint
+      }
+  }
 
   return tempcluster
 }
