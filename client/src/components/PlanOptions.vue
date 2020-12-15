@@ -61,16 +61,7 @@
 <script>
 export default {
 	props: {
-		planOptions: {
-			type: Object,
-			default: function() {
-				return {
-					name: '새로운 일정',
-					nights: 1,
-					isHotel: 0
-				}
-			}
-		}
+		planOptions: Object
 	},
 	methods: {
 		proceed() {

@@ -88,13 +88,15 @@ import requestHandler from '../utils/requestHandler'
 export default {
 	props: {
 		planOptions: Object,
-		planData: Array
+		planData: Array,
+		members: Array,
+		id: String,
+		mode: String
 	},
 	data: function() {
 		return {
 			locationFocused: undefined,
-			searchUsername: '',
-			members: [{ name: this.$store.state.user.name, nickname: this.$store.state.user.nickname }]
+			searchUsername: ''
 		}
 	},
 	methods: {
@@ -149,25 +151,44 @@ export default {
 			}
 		},
 		savePlan() {
-			requestHandler
-				.sendPostRequest('/plan', {
-					name: this.planOptions.name,
-					days: this.planOptions.nights + 1,
-					members: this.members,
-					places: this.planData
-				})
-				.then((response) => {
-					if (response.success) {
-						// 일정 저장 성공
-						alert('일정 저장 성공')
-					} else {
-						alert('일정 저장에 실패했습니다. 다시 시도해주세요.')
-					}
-				})
-				.catch((error) => {
-					alert('오류가 발생했습니다. 다시 시도해주세요.')
-					console.error(error)
-				})
+			let planInfo = {
+				name: this.planOptions.name,
+				days: this.planOptions.nights + 1,
+				members: this.members,
+				places: this.planData
+			}
+			if (this.mode == 'new') {
+				requestHandler
+					.sendPostRequest('/plan', planInfo)
+					.then((response) => {
+						if (response.success) {
+							// 일정 저장 성공
+							alert('일정 저장 성공')
+						} else {
+							alert('일정 저장에 실패했습니다. 다시 시도해주세요.')
+						}
+					})
+					.catch((error) => {
+						alert('오류가 발생했습니다. 다시 시도해주세요.')
+						console.error(error)
+					})
+			} else if (this.mode == 'edit') {
+				planInfo.id = this.id
+				requestHandler
+					.sendPutRequest('/plan', planInfo)
+					.then((response) => {
+						if (response.success) {
+							// 일정 저장 성공
+							alert('일정 저장 성공')
+						} else {
+							alert('일정 저장에 실패했습니다. 다시 시도해주세요.')
+						}
+					})
+					.catch((error) => {
+						alert('오류가 발생했습니다. 다시 시도해주세요.')
+						console.error(error)
+					})
+			}
 		}
 	}
 }

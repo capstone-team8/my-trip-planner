@@ -2,7 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home'
 import Login from '../views/Login'
-import Plan from '../views/Plan'
+import NewPlan from '../views/NewPlan'
+import EditPlan from '../views/EditPlan'
 
 Vue.use(VueRouter)
 
@@ -13,9 +14,15 @@ const routes = [
 		component: Home,
 		children: [
 			{
-				path: '/new',
+				path: '/plan/new',
 				name: 'NewPlan',
-				component: Plan
+				component: NewPlan
+			},
+			{
+				path: '/plan/edit/:id',
+				name: 'EditPlan',
+				component: EditPlan,
+				props: true
 			}
 		]
 	},

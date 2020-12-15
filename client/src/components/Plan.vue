@@ -26,7 +26,10 @@
 								v-if="page == 3"
 								class="planMaker"
 								:planOptions="planOptions"
+								:members="members"
 								:planData="planData"
+								:id="id"
+								:mode="mode"
 								@moveToSecond="moveToSecond"
 								@locationFocused="onLocationFocused"
 								@locationFocusCanceled="onLocationFocusCanceled"
@@ -57,22 +60,67 @@ import PlanMaker from '../components/PlanMaker'
 import PlanResult from '../components/PlanResult'
 import Map from '../components/Map'
 
+import requestHandler from '../utils/requestHandler'
+
 export default {
 	name: 'Plan',
-	data: function() {
-		return {
-			markerFocused: undefined,
-			page: 1,
-			planOptions: undefined,
-			locationsSelected: [],
-			planData: undefined
-		}
-	},
 	components: {
 		PlanOptions,
 		PlanMaker,
 		PlanResult,
 		Map
+	},
+	props: {
+		id: {
+			type: String,
+			default: undefined
+		},
+		mode: {
+			type: String,
+			default: 'new'
+		}
+	},
+	data: function() {
+		return {
+			markerFocused: undefined,
+			page: 1,
+			planOptions: {
+				name: '새로운 일정',
+				nights: 0,
+				isHotel: 0
+			},
+			members: [{ name: this.$store.state.user.name, nickname: this.$store.state.user.nickname }],
+			locationsSelected: [],
+			planData: undefined
+		}
+	},
+	created() {
+		if (this.mode != 'new' && this.id) {
+			this.page = 3
+
+			// Read the plan data from the database
+			requestHandler
+				.sendGetRequestWithCredentials('/plan/auth', { id: this.id })
+				.then((res) => {
+					if (res.success) {
+						// Set data with response
+						this.planOptions = res.planOptions
+						this.members = res.members
+						this.locationsSelected = res.locationsSelected
+						this.planData = res.planData
+
+						this.$refs.map.showFocused()
+					} else {
+						alert('일정 정보를 읽을 수 없습니다.')
+						this.$router.replace({ name: 'NewPlan' })
+					}
+				})
+				.catch((err) => {
+					alert('에러가 발생했습니다.')
+					this.$router.replace({ name: 'NewPlan' })
+				})
+			console.log('받아오기')
+		}
 	},
 	methods: {
 		onLocationFocused(location) {

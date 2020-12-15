@@ -5,6 +5,8 @@ const User = require('../models/User')
 const Plan = require('../models/Plan')
 const Place = require('../models/Place')
 
+const { auth } = require('../middleware/auth')
+
 const planMaker = require('../modules/planMaker')
 
 // 일정 생성 엔드포인트
@@ -40,11 +42,127 @@ router.get('/', (req, res) => {
 		})
 })
 
+// Get a plan with authenticated user
+router.get('/auth', auth, async (req, res) => {
+	if (req.query.id) {
+		try {
+			const plan = await Plan.findOne({ where: { id: req.query.id } })
+			const users = await plan.getUsers()
+
+			// Check if current user has the plan
+			let hasAuthority = false
+			for (const user of users) if (user.id == req.user.id) hasAuthority = true
+			// Fail if not
+			if (!hasAuthority) return res.send({ success: false })
+
+			// Set planOptions
+			const planOptions = {
+				name: plan.name,
+				nights: plan.days - 1,
+				isHotel: 0
+			}
+
+			// Set planData & locationsSelected
+			let planData = []
+			for (let i = 0; i < plan.days; ++i) planData.push([])
+			let locationsSelected = []
+			const places = await plan.getPlaces()
+			for (const place of places) {
+				const placeData = {
+					name: place.name,
+					type: place.type,
+					geometry: {
+						location: {
+							lat: place.lat,
+							lng: place.lng
+						}
+					},
+					place_id: place.place_id,
+					formatted_address: place.formatted_address
+				}
+
+				planData[place.day - 1].push(placeData)
+				locationsSelected.push(placeData)
+			}
+
+			// Set members
+			let members = []
+			for (const user of users) {
+				members.push({ name: user.name, nickname: user.nickname })
+			}
+
+			return res.send({
+				success: true,
+				planOptions: planOptions,
+				members: members,
+				locationsSelected: locationsSelected,
+				planData: planData
+			})
+		} catch {
+			return res.send({ success: false })
+		}
+	} else {
+		return res.send({ success: false })
+	}
+})
+
 // Create a new plan
 router.post('/', async (req, res) => {
 	// Set the general info
 	let planInfo = { name: req.body.name, days: req.body.days }
 	const plan = await Plan.create(planInfo)
+
+	// Set places
+	for (const day in req.body.places) {
+		const dayPlaces = req.body.places[day]
+		console.log('day', day)
+		for (const i in dayPlaces) {
+			const placeData = dayPlaces[i]
+			const realDay = parseInt(day) + 1
+
+			const placeInfo = {
+				day: realDay,
+				idx: i,
+				name: placeData.name,
+				type: placeData.type,
+				lat: placeData.geometry.location.lat,
+				lng: placeData.geometry.location.lng,
+				place_id: placeData.place_id,
+				formatted_address: placeData.formatted_address
+			}
+			const place = await Place.create(placeInfo)
+
+			// Set the place with the plan
+			plan.addPlace(place)
+		}
+	}
+
+	// Set members
+	for (const memberData of req.body.members) {
+		const member = await User.findOne({ where: { name: memberData.name } })
+
+		// Set the member with the plan
+		member.addPlan(plan)
+	}
+
+	res.status(200).send({ success: true })
+})
+
+// Update a plan
+router.put('/', async (req, res) => {
+	// Set the general info
+	let plan = await Plan.findOne({where: {id: req.body.id}})
+	plan.name = req.body.name
+	plan.days = req.body.days
+	plan = await plan.save()
+
+	// Reset places and members
+	const oldUsers = await plan.getUsers()
+	plan.removeUsers(oldUsers)
+	const oldPlaces = await plan.getPlaces()
+	for (oldPlace of oldPlaces) {
+		await oldPlace.destroy()
+	}
 
 	// Set places
 	for (const day in req.body.places) {

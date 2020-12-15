@@ -13,6 +13,19 @@ export default {
 			throw error
 		}
 	},
+	sendGetRequestWithCredentials: async (endPoint, params) => {
+		const url = process.env.VUE_APP_API_DOMAIN + endPoint
+		try {
+			const res = await axios.get(url, {
+				params: params,
+				withCredentials: true
+			})
+
+			return res.data
+		} catch (error) {
+			throw error
+		}
+	},
 	sendPutRequest: async (endPoint, data) => {
 		const url = process.env.VUE_APP_API_DOMAIN + endPoint
 		try {
