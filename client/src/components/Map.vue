@@ -99,7 +99,7 @@ export default {
 	watch: {
 		markerFocused: function() {
 			if (this.markerFocused) {
-				this.showPlace(this.markerFocused)
+				this.showPlace(this.markerFocused, 17)
 			} else {
 				this.showFocused()
      		}
@@ -115,25 +115,14 @@ export default {
 				this.$refs.mapRef.fitBounds(bounds);
 			}
 			else if(this.locationsSelected.length == 1){
-				for (let m of this.locationsSelected){
-					this.$refs.mapRef.$mapPromise.then((map) => {
-						map.panTo(m.location); // 맵 이동
-						map.setZoom(17);
-					})
-				}
+				showPlace(this.locationsSelected[0].location, 17)			
 			}
 			
 		},
-		showPlace(place){ 
+		showPlace(place, zoom){ 
 			this.$refs.mapRef.$mapPromise.then((map) => {
 				map.panTo(place); // 맵 이동
-				map.setZoom(17);
-			})
-		},
-		showCountry(place){ 
-			this.$refs.mapRef.$mapPromise.then((map) => {
-				map.panTo(place); // 맵 이동
-				map.setZoom(10);
+				map.setZoom(zoom);
 			})
 		},
 		showRoute(places){ // 루트 설정
