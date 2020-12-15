@@ -10,7 +10,7 @@
 /* Import fonts */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-@import url('https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css');
+@import url('https://cdn.jsdelivr.net/npm/boxicons@2.0.7/css/boxicons.min.css');
 
 :root {
 	--my-lightgray: #f1f1f1;

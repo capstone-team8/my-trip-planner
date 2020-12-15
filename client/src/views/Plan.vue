@@ -5,7 +5,12 @@
 				<vs-row class="fullHeight">
 					<vs-col class="fullHeight" w="6" sm="12">
 						<vs-row class="fullHeight" align="center" justify="center">
-							<PlanOptions v-if="page == 1" class="planMaker" @moveToSecond="moveToSecond" />
+							<PlanOptions
+								v-if="page == 1"
+								class="planMaker"
+								:planOptions="planOptions"
+								@moveToSecond="moveToSecond"
+							/>
 							<PlanMaker
 								v-if="page == 2"
 								class="planMaker"
@@ -20,6 +25,7 @@
 							<PlanResult
 								v-if="page == 3"
 								class="planMaker"
+								:planOptions="planOptions"
 								:planData="planData"
 								@moveToSecond="moveToSecond"
 								@locationFocused="onLocationFocused"
@@ -31,11 +37,11 @@
 					</vs-col>
 					<vs-col class="fullHeight" w="6" sm="12">
 						<vs-row class="fullHeight" align="center" justify="center">
-							<Map 
+							<Map
 								ref="map"
-								class="map" 
-								:locationsSelected="locationsSelected" 
-								:markerFocused="markerFocused" 
+								class="map"
+								:locationsSelected="locationsSelected"
+								:markerFocused="markerFocused"
 							/>
 						</vs-row>
 					</vs-col>
@@ -52,14 +58,14 @@ import PlanResult from '../components/PlanResult'
 import Map from '../components/Map'
 
 export default {
-	name: 'NewPlan',
+	name: 'Plan',
 	data: function() {
 		return {
 			markerFocused: undefined,
 			page: 1,
 			planOptions: undefined,
 			locationsSelected: [],
-			planData: undefined,
+			planData: undefined
 		}
 	},
 	components: {
@@ -75,15 +81,15 @@ export default {
 		onLocationFocusCanceled() {
 			this.markerFocused = undefined
 		},
-		resetData(data){
+		resetData(data) {
 			if (data && data.locationsSelected) {
 				this.locationsSelected = data.locationsSelected
-      			this.$refs.map.directionsDisplay.set('directions', null)
+				this.$refs.map.directionsDisplay.set('directions', null)
 				this.markerFocused = undefined
 				this.$refs.map.showFocused()
 			}
 		},
-		resetRoute(){
+		resetRoute() {
 			this.$refs.map.directionsDisplay.set('directions', null)
 			this.$refs.map.showFocused()
 		},
@@ -116,7 +122,7 @@ export default {
 
 			this.page = 3
 		},
-		selectRoute(plan){
+		selectRoute(plan) {
 			this.$refs.map.showRoute(plan)
 		}
 	}

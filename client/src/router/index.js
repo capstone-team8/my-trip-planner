@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home'
 import Login from '../views/Login'
-import NewPlan from '../views/NewPlan'
+import Plan from '../views/Plan'
 
 Vue.use(VueRouter)
 
@@ -15,7 +15,7 @@ const routes = [
 			{
 				path: '/new',
 				name: 'NewPlan',
-				component: NewPlan
+				component: Plan
 			}
 		]
 	},

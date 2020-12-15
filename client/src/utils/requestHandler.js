@@ -22,5 +22,15 @@ export default {
 		} catch (error) {
 			throw error
 		}
+	},
+	sendPostRequest: async (endPoint, data) => {
+		const url = process.env.VUE_APP_API_DOMAIN + endPoint
+		try {
+			const res = await axios.post(url, data)
+
+			return res.data
+		} catch (error) {
+			throw error
+		}
 	}
 }
