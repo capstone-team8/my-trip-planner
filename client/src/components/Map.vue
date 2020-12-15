@@ -119,7 +119,7 @@ export default {
 			}
 			
 		},
-		showPlace(place, zoom){ 
+		showPlace(place, zoom){ // place에 {lat,lng}, zoom에 마커는 17, 도시는 10 정도 설정
 			this.$refs.mapRef.$mapPromise.then((map) => {
 				map.panTo(place); // 맵 이동
 				map.setZoom(zoom);
