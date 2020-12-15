@@ -77,11 +77,10 @@ function createPathWithoutHotels(input, k) {
 }
 
 //1개의 숙소
-function createPathWithOneHotels(input) {
+function createPathWithOneHotels(input, k) {
 	var places = []
 	var hotel = []
-	var k = 3
-
+	
 	//input에서 필요한 요소들만 추출
 	places = inputExtract(input)
 	//장소들을 숙소와 그 외 장소들로 구분
@@ -107,8 +106,9 @@ function createPathWithOneHotels(input) {
 
 	var distanceMatrix
 	var path = new Array(k)
-  	var cluster=new Array(k)
-
+	var temppoint
+	var cluster=new Array(k)
+	
 	for(var i=0; i<places.length+1; i++){
 		inidist[i]=new Array(places.length)
 	}
@@ -122,27 +122,25 @@ function createPathWithOneHotels(input) {
 			}
 		}
 	}
-
+	
 	for (var i = 0; i < k; i++) {
 		c[i] = new Array(2)
-		c[i][0] = hotel[0] + Math.cos((2 * Math.PI * i) / k)
-		c[i][1] = hotel[0] + Math.sin((2 * Math.PI * i) / k)
 	}
-	var N = places.length
-	for (var i = 0; i < 10; i++) {
-		//iteration 횟수
-		for (var j = 0; j < N; j++) {
-			//places 별 접근
-			var min = 100000000000
-			for (var l = 0; l < k; l++) {
-				//places들을 가장 가까운 l-cluster로 분류
-				dist = Math.pow(c[l][0] - places[j][0][0], 2) + Math.pow(c[l][1] - places[j][0][1], 2)
-				console.log('dist')
-				console.log(dist)
-				if (dist < min) {
-					min = dist
-					r[j] = l
-				}
+	
+	while(1){//initial cluster 생성(1)
+		if(tempcn>=cdn){
+			tempcn=0
+			iniclu=iniclu+1
+			inip=0
+			if(iniclu==k){
+				break
+			}
+		}
+		var inimin=100000000000
+		for (var i=0; i < places.length; i++){//처음에는 호텔과 가장 가까운 장소 찾아서 클러스터에, 그 다음부터는 전에 찾은 장소와 가장 가까운 장소 클러스터로
+			if(inidist[inip][i]<inimin && inidist[inip][i]>0){
+				inimin=inidist[inip][i]
+				temp=i
 			}
 		}
 		r[temp]=iniclu
@@ -150,58 +148,131 @@ function createPathWithOneHotels(input) {
 		inip=temp
 		tempcn=tempcn+1
 	}
-	for(var i=0;i<places.length;i++){
+	for(var i=0;i<places.length;i++){//initial cluster 생성(2)
 		if(!r[i]){
 			r[i]=k
 		}
 	}
-  	for(var i=0;i<N;i++){
-    	r[i]=r[i]-1
-  	}
-
-	for (var i = 0; i < 3; i++) {
-		//iteration 횟수
+	for(var i=0;i<N;i++){//initial cluster 생성(3)
+	r[i]=r[i]-1
+	}
+	
+	for (var i = 0; i < 3; i++) {//iteration
 		var count = []
 		var nc = []
-		for (var j = 0; j < k; j++) {
-			//호텔 위치 고려
+		for (var j = 0; j < k; j++) {//호텔 위치 고려
 			count[j] = 1
 			nc[j] = new Array(2)
-			nc[j][0] = hotel[0]
-			nc[j][1] = hotel[1]
+			nc[j][0] = hotel[0][0][0]
+			nc[j][1] = hotel[0][0][1]
 		}
-		for (var j = 0; j < N; j++) {
-			//c update(1) 같은 클러스터 좌표 전부 더해줌
+		for (var j = 0; j < N; j++) {//c update(1) 같은 클러스터 좌표 전부 더해줌
 			var clu = r[j]
 			count[clu] = count[clu] + 1
 			nc[clu][0] = nc[clu][0] + places[clu][0][0]
 			nc[clu][1] = nc[clu][1] + places[clu][0][1]
 		}
-		for (var j = 0; j < k; j++) {
-			//c update(2) 클러스터 별 노드 개수로 값 나눠줌(평균)
+		for (var j = 0; j < k; j++) {//c update(2) 클러스터 별 노드 개수로 값 나눠줌(평균)
 			nc[j][0] = nc[j][0] / count[j]
 			nc[j][1] = nc[j][1] / count[j]
 		}
-		n = nc //c update
+		c = nc //c update
+
+		for (var j = 0; j < N; j++) {//places 별 접근
+			var min = 100000000000
+			for (var l = 0; l < k; l++) {//places들을 가장 가까운 l-cluster로 분류
+				dist = Math.pow(c[l][0] - places[j][0][0], 2) + Math.pow(c[l][1] - places[j][0][1], 2)
+				if (dist < min) {
+					min = dist
+					r[j] = l
+				}
+			}
+		}
 	}
+	
 	console.log('r')
 	console.log(r)
-  	for(var i=0;i<k;i++){
-    	cluster[i]=[]
-  	}
-  	for(var i=0;i<N;i++){
-    	cluster[r[i]].push(places[i])
-  	}
-  	console.log(cluster)
-
 	for(var i=0;i<k;i++){
+		cluster[i]=[]
+	}
+	for(var i=0;i<N;i++){//클러스터(r)별로 장소 배열 생성
+		cluster[r[i]].push(places[i])
+	}
+	console.log(cluster)
+
+	for(var i=0;i<k;i++){//클러스터내에서 경로 생성
 		distanceMatrix = createDistanceMatrix(cluster[i])
 		path[i] = nearestNeighbor(cluster[i], distanceMatrix)
 		console.log(i)
 		console.log(path[i])
 	}
 
-  	for (var i = 0; i < path.length; i++) {
+	for (var i=0; i<path.length; i++){//식당 고려
+	var restaurantCount = 0
+	var restaurantIndex = []
+	var changeIndex
+		for (var j=0; j<path[i].length; j++){
+		if (path[i][j][1] == 'restaurant'){
+			restaurantCount++
+			restaurantIndex.push(j)
+		}
+		}
+		if (restaurantCount == 1){
+		changeIndex = parseInt(path[i].length/2)
+		temppoint = path[i][restaurantIndex[0]]
+		path[i][restaurantIndex[0]] = path[i][changeIndex]
+		path[i][changeIndex] = temppoint
+		}
+		if (restaurantCount == 2){
+		//첫번째 식당
+		changeIndex = parseInt(path[i].length/2)
+		temppoint = path[i][restaurantIndex[0]]
+		path[i][restaurantIndex[0]] = path[i][changeIndex]
+		path[i][changeIndex] = temppoint
+		//두번째 식당
+		changeIndex = path[i].length-1
+		temppoint = path[i][restaurantIndex[1]]
+		path[i][restaurantIndex[1]] = path[i][changeIndex]
+		path[i][changeIndex] = temppoint
+		}
+		if (restaurantCount == 3){
+		//첫번째 식당
+		changeIndex = 1
+		temppoint = path[i][restaurantIndex[0]]
+		path[i][restaurantIndex[0]] = path[i][changeIndex]
+		path[i][changeIndex] = temppoint
+		//두번째 식당
+		changeIndex = parseInt(path[i].length/2)
+		temppoint = path[i][restaurantIndex[1]]
+		path[i][restaurantIndex[1]] = path[i][changeIndex]
+		path[i][changeIndex] = temppoint
+		//세번째 식당
+		changeIndex = path[i].length-1
+		temppoint = path[i][restaurantIndex[1]]
+		path[i][restaurantIndex[1]] = path[i][changeIndex]
+		path[i][changeIndex] = temppoint
+		}
+	}
+	
+	for (var i=0; i<path.length; i++){//야경 고려
+		var nightCount = 0
+		var nightIndex = []
+		var changeIndex
+		for (var j=0; j<path[i].length; j++){
+			if (path[i][j][1] == 'night'){
+			nightCount++
+			nightIndex.push(j)
+			}
+		}
+		for (var j=0; j<nightCount; j++){
+			changeIndex = path[i].length-1-j
+			temppoint = path[i][nightIndex[i]]
+			path[i][nightIndex[i]] = path[i][changeIndex]
+			path[i][changeIndex] = temppoint
+		}
+	}
+
+  	for (var i = 0; i < path.length; i++) {//시작점 도착점에 호텔 추가
     	finalPath.push([])
     	finalPath[i].push(hotel[0][2])
     	for (var j = 0; j < path[i].length; j++) {
