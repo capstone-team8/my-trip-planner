@@ -115,7 +115,7 @@ export default {
 				this.$refs.mapRef.fitBounds(bounds);
 			}
 			else if(this.locationsSelected.length == 1){
-				showPlace(this.locationsSelected[0].location, 17)			
+				this.showPlace(this.locationsSelected[0].location, 17)			
 			}
 			
 		},
