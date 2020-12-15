@@ -79,7 +79,6 @@ function createPathWithoutHotels(input, k) {
 //1개의 숙소
 function createPathWithOneHotels(input, k) {
 	var places = []
-	var travels = []
 	var hotel = []
 
 	//input에서 필요한 요소들만 추출
@@ -105,11 +104,9 @@ function createPathWithOneHotels(input, k) {
 	var tempcn=0
 	var iniclu=1
 
-	var centroidsplaces = new Array(k)
 	var distanceMatrix
-	var path
-	var clusterPath
-  var cluster=new Array(k)
+	var path = new Array(k)
+  	var cluster=new Array(k)
 
 	for(var i=0; i<places.length+1; i++){
 		inidist[i]=new Array(places.length)
@@ -155,9 +152,9 @@ function createPathWithOneHotels(input, k) {
 			r[i]=k
 		}
 	}
-  for(var i=0;i<N;i++){
-    r[i]=r[i]-1
-  }
+  	for(var i=0;i<N;i++){
+    	r[i]=r[i]-1
+  	}
 
 	for (var i = 0; i < 3; i++) {
 		//iteration 횟수
@@ -200,41 +197,32 @@ function createPathWithOneHotels(input, k) {
 
 	console.log('r')
 	console.log(r)
-  for(var i=0;i<k;i++){
-    cluster[i]=[]
-  }
-  for(var i=0;i<N;i++){
-    cluster[r[i]].push(places[i])
-  }
-  console.log(cluster)
+  	for(var i=0;i<k;i++){
+    	cluster[i]=[]
+  	}
+  	for(var i=0;i<N;i++){
+    	cluster[r[i]].push(places[i])
+  	}
+  	console.log(cluster)
 
-  for (var i=0; i<k; i++){
-    centroidsplaces[i] = []
-    centroidsplaces[i].push(c[i])
-    centroidsplaces[i].push("centroid")
-    centroidsplaces[i].push(i)
-  }
-	//클러스터간 거리 매트릭스 생성
-	distanceMatrix = createDistanceMatrix(centroidsplaces)
-	//클러스터간 경로 생성
-	path = nearestNeighbor(centroidsplaces, distanceMatrix)
+	for(var i=0;i<k;i++){
+		distanceMatrix = createDistanceMatrix(cluster[i])
+		path[i] = nearestNeighbor(cluster[i], distanceMatrix)
+		console.log(i)
+		console.log(path[i])
+	}
 
-  clusterPath = getPathName(path)
-
-  cluster = clusterRearrange(cluster, clusterPath, c)
-  console.log(cluster)
-
-  for (var i = 0; i < cluster.length; i++) {
-    finalPath.push([])
-    finalPath[i].push(hotel[0][2])
-    for (var j = 0; j < cluster[i].length; j++) {
-      finalPath[i].push(cluster[i][j][2])
-      console.log(cluster[i][j][2])
-    }
-    finalPath[i].push(hotel[0][2])
-  }
-  console.log(finalPath)
-  return finalPath
+  	for (var i = 0; i < cluster.length; i++) {
+    	finalPath.push([])
+    	finalPath[i].push(hotel[0][2])
+    	for (var j = 0; j < cluster[i].length; j++) {
+      	finalPath[i].push(cluster[i][j][2])
+      	console.log(cluster[i][j][2])
+    	}
+    	finalPath[i].push(hotel[0][2])
+  	}
+  	console.log(finalPath)
+  	return finalPath
 }
 
 //Nearest neighbor. path return
