@@ -1,6 +1,6 @@
 <template>
 	<div class="container">
-		<GmapMap ref="mapRef" :center="{lat: 40.712391, lng: -74.007222}" :zoom="16" style="width: 100%; height: 100%">
+		<GmapMap ref="mapRef" :center="{lat: 40.712391, lng: -74.007222}" :zoom="10" style="width: 100%; height: 100%">
 			<div v-for="(m, index) in locationsSelected" :key="index">
 				<GmapMarker
 					v-if="m.type=='tour'"
