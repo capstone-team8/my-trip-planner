@@ -1,28 +1,49 @@
 <template>
 	<div class="flex-box">
 		<h2>
-			생성된 여행 일정
+			<vs-row justify="space-between">
+				생성된 여행 일정
+				<vs-tooltip>
+					<vs-button @click="resetRoute" gradient success icon>
+						<i class="bx bxs-map-alt"></i>
+					</vs-button>
+					<template #tooltip>
+						전체 지도 보기
+					</template>
+				</vs-tooltip>
+			</vs-row>
 		</h2>
 		<vs-row class="contents">
 			<vs-col>
 				<vs-table v-for="places in planData" :key="planData.indexOf(places)">
 					<template #header>
-						<div class="table-header">{{ planData.indexOf(places) + 1 }}일차</div>
+						<div class="table-header">
+							<vs-row justify="space-between" align="center">
+								{{ planData.indexOf(places) + 1 }}일차
+								<vs-tooltip>
+									<vs-button @click="selectRoute(places)" dark icon>
+										<i class="bx bx-trip"></i>
+									</vs-button>
+									<template #tooltip>
+										여행 루트 보기
+									</template>
+								</vs-tooltip>
+							</vs-row>
+						</div>
 					</template>
 					<template #tbody>
-						<vs-tr v-for="place in places" :key="place.place_id" class="cursor-pointer" @click="toggleLocation(place)">
+						<vs-tr
+							v-for="place in places"
+							:key="place.place_id"
+							class="cursor-pointer"
+							@click="toggleLocation(place)"
+						>
 							<vs-td>
 								{{ place.name }}
 							</vs-td>
 						</vs-tr>
-						<vs-button v-on:click="selectRoute(places)" gradient>
-							루트 표시
-						</vs-button>
 					</template>
 				</vs-table>
-				<vs-button v-on:click="resetRoute()" danger>
-					루트 제거
-				</vs-button>
 			</vs-col>
 		</vs-row>
 		<vs-row justify="space-between">
@@ -60,10 +81,10 @@ export default {
 		back() {
 			this.$emit('moveToSecond')
 		},
-		selectRoute(plan){
-			this.$emit('selectRoute',plan)
+		selectRoute(plan) {
+			this.$emit('selectRoute', plan)
 		},
-		resetRoute(){
+		resetRoute() {
 			this.$emit('resetRoute')
 		}
 	}
