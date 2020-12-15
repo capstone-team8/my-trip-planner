@@ -203,7 +203,6 @@ export default {
 				})
 				.then((response) => {
 					// 일정생성 성공
-					console.log(response)
 					this.$emit('planMade', { planData: response, locationsSelected: this.locationsSelected })
 				})
 				.catch((error) => {

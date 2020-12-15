@@ -38,7 +38,7 @@ const Place = db.define('place', {
 	}
 })
 // Place belongs to plan (1:N)
-Plan.hasMany(Place)
-Place.belongsTo(Plan, { onDelete: 'CASCADE' })
+Plan.hasMany(Place, {onDelete: 'CASCADE'})
+Place.belongsTo(Plan)
 
 module.exports = Place

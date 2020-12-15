@@ -11,7 +11,9 @@ export default {
 		myPlan: Plan
 	},
 	props: {
-		id: String
+		id: {
+			default: undefined
+		}
 	}
 }
 </script>

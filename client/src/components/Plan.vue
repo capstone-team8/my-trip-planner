@@ -72,7 +72,6 @@ export default {
 	},
 	props: {
 		id: {
-			type: String,
 			default: undefined
 		},
 		mode: {
@@ -122,7 +121,6 @@ export default {
 					alert('에러가 발생했습니다.')
 					this.$router.replace({ name: 'NewPlan' })
 				})
-			console.log('받아오기')
 		}
 	},
 	methods: {

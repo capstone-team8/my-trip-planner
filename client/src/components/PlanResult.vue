@@ -90,13 +90,21 @@ export default {
 		planOptions: Object,
 		planData: Array,
 		members: Array,
-		id: String,
+		id: {
+			default: undefined
+		},
 		mode: String
 	},
 	data: function() {
 		return {
 			locationFocused: undefined,
 			searchUsername: ''
+		}
+	},
+	mounted() {
+		if (!this.members[0].name) {
+			this.members[0].name = this.$store.state.user.name
+			this.members[0].nickname = this.$store.state.user.nickname
 		}
 	},
 	methods: {
@@ -164,6 +172,7 @@ export default {
 						if (response.success) {
 							// 일정 저장 성공
 							alert('일정 저장 성공')
+							this.$router.push({ name: 'EditPlan', params: { id: response.id } })
 						} else {
 							alert('일정 저장에 실패했습니다. 다시 시도해주세요.')
 						}

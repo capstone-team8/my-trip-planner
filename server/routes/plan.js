@@ -144,7 +144,7 @@ router.post('/', async (req, res) => {
 		member.addPlan(plan)
 	}
 
-	res.status(200).send({ success: true })
+	res.status(200).send({ success: true, id: plan.id })
 })
 
 // Update a plan
