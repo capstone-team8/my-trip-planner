@@ -65,8 +65,8 @@ function createPathWithoutHotels(input, k) {
 	path = nearestNeighbor(centroidsplaces, distanceMatrix)
 
 	clusterPath = getPathName(path)
-	// TODO경로에 따라 클러스터 재정렬 및 클러스터 내부경로 설정
-	// cluster = clusterRearrange(cluster, clusterPath, centroids)
+	//경로에 따라 클러스터 재정렬 및 클러스터 내부경로 설정
+	cluster = clusterRearrange(cluster, clusterPath, centroids)
 	for (var i = 0; i < cluster.length; i++) {
 		finalPath.push([])
 		for (var j = 0; j < cluster[i].length; j++) {
@@ -77,9 +77,10 @@ function createPathWithoutHotels(input, k) {
 }
 
 //1개의 숙소
-function createPathWithOneHotels(input, k) {
+function createPathWithOneHotels(input) {
 	var places = []
 	var hotel = []
+	var k = 3
 
 	//input에서 필요한 요소들만 추출
 	places = inputExtract(input)
@@ -124,22 +125,24 @@ function createPathWithOneHotels(input, k) {
 
 	for (var i = 0; i < k; i++) {
 		c[i] = new Array(2)
+		c[i][0] = hotel[0] + Math.cos((2 * Math.PI * i) / k)
+		c[i][1] = hotel[0] + Math.sin((2 * Math.PI * i) / k)
 	}
-
-	while(1){
-		if(tempcn==cdn){
-			tempcn=0
-			iniclu=iniclu+1
-			inip=0
-			if(iniclu==k){
-				break
-			}
-		}
-		var inimin=100000000000
-		for (var i=0; i < places.length; i++){//처음에는 호텔과 가장 가까운 장소 찾아서 클러스터에, 그 다음부터는 전에 찾은 장소와 가장 가까운 장소 클러스터로
-			if(inidist[inip][i]<inimin && inidist[inip][i]>0){
-				inimin=inidist[inip][i]
-				temp=i
+	var N = places.length
+	for (var i = 0; i < 10; i++) {
+		//iteration 횟수
+		for (var j = 0; j < N; j++) {
+			//places 별 접근
+			var min = 100000000000
+			for (var l = 0; l < k; l++) {
+				//places들을 가장 가까운 l-cluster로 분류
+				dist = Math.pow(c[l][0] - places[j][0][0], 2) + Math.pow(c[l][1] - places[j][0][1], 2)
+				console.log('dist')
+				console.log(dist)
+				if (dist < min) {
+					min = dist
+					r[j] = l
+				}
 			}
 		}
 		r[temp]=iniclu
@@ -164,8 +167,8 @@ function createPathWithOneHotels(input, k) {
 			//호텔 위치 고려
 			count[j] = 1
 			nc[j] = new Array(2)
-			nc[j][0] = hotel[0][0][0]
-			nc[j][1] = hotel[0][0][1]
+			nc[j][0] = hotel[0]
+			nc[j][1] = hotel[1]
 		}
 		for (var j = 0; j < N; j++) {
 			//c update(1) 같은 클러스터 좌표 전부 더해줌
@@ -179,22 +182,8 @@ function createPathWithOneHotels(input, k) {
 			nc[j][0] = nc[j][0] / count[j]
 			nc[j][1] = nc[j][1] / count[j]
 		}
-		c = nc //c update
-
-		for (var j = 0; j < N; j++) {
-			//places 별 접근
-			var min = 100000000000
-			for (var l = 0; l < k; l++) {
-				//places들을 가장 가까운 l-cluster로 분류
-				dist = Math.pow(c[l][0] - places[j][0][0], 2) + Math.pow(c[l][1] - places[j][0][1], 2)
-				if (dist < min) {
-					min = dist
-					r[j] = l
-				}
-			}
-		}
+		n = nc //c update
 	}
-
 	console.log('r')
 	console.log(r)
   	for(var i=0;i<k;i++){
@@ -365,7 +354,7 @@ function placeDivider_hotel(placeList) {
 function placeDivider_tour(placeList) {
 	var travels = []
 	for (var i = 0; i < placeList.length; i++) {
-		if (placeList[i][1] == 'tour') {
+		if (placeList[i][1] != 'hotel') {
 			travels.push(placeList[i])
 		}
 	}
@@ -416,16 +405,16 @@ function inputExtract(input) {
 function getPathName(path) {
 	var pathName = []
 	var temp = []
-	var templength
+  var templength
 	for (var i = 0; i < path.length; i++) {
 		pathName.push(path[i][2])
-		//다른 장소가 통합돼있을경우
+    //다른 장소가 통합돼있을경우
 		if (path[i].length != 3) {
-			templength = path[i].length - 3
+      templength = path[i].length-3
 			temp = path[i].slice(3)
-			for (var j = 0; j < path[i].length - 3; j++) {
-				pathName.push(temp[j][2])
-			}
+			for (var j=0; j<path[i].length-3; j++){
+        pathName.push(temp[j][2])
+      }
 		}
 	}
 	return pathName
@@ -434,41 +423,34 @@ function getPathName(path) {
 //K-Means Clustering
 
 //Initial centroid 설정 후 return
-function getDataRange(k, places) {
-	//좌표 범위 계산
-	var xmin = places[0][0][0]
-	var xmax = places[0][0][0]
-	var ymin = places[0][0][1]
-	var ymax = places[0][0][1]
-	var temppoint = []
-	for (var i = 0; i < places.length; i++) {
-		temppoint = places[i][0]
-		if (temppoint[0] < xmin) {
-			xmin = temppoint[0]
-		}
-		if (temppoint[0] > xmax) {
-			xmax = temppoint[0]
-		}
-		if (temppoint[1] < ymin) {
-			ymin = temppoint[1]
-		}
-		if (temppoint[1] > ymax) {
-			ymax = temppoint[1]
-		}
-	}
-	//좌표 범위에 따른 랜덤좌표 설정
-	var centroids = new Array(k)
-	for (var i = 0; i < k; i++) {
+function getDataRange(k, places){
+  //place를 k의 개수로 나눠서 설정
+  var plength = parseInt(places.length/k)
+  var xsum = 0
+  var ysum = 0
+  var centroid = []
+  var centroids = new Array(k)
+  for (var i = 0; i < k; i++) {
 		centroids[i] = []
 	}
-	for (var i = 0; i < k; i++) {
-		var centroid = []
-		var xrand = xmin + Math.random() * (xmax - xmin)
-		var yrand = ymin + Math.random() * (ymax - ymin)
-		centroid = [xrand, yrand]
-		centroids[i] = centroid
-	}
-	return centroids
+  console.log(places)
+  console.log(plength)
+  for (var i=0; i<k; i++){
+    xsum = 0
+    ysum = 0
+    for (var j=0; j<plength; j++){
+      console.log("i")
+      console.log(i)
+      console.log("j")
+      console.log(j)
+      console.log(i*plength+j)
+      xsum += places[i*plength+j][0][0]
+      ysum += places[i*plength+j][0][1]
+    }
+    centroid = [xsum/plength, ysum/plength]
+    centroids[i] = centroid
+  }
+  return centroids
 }
 
 //Centroid에 따른 cluster return
@@ -522,54 +504,57 @@ function getNewCentroid(places, cluster, centroids) {
 }
 
 //클러스터화 이후 경로 재설정하여 새로운 cluster return
-function clusterRearrange(cluster, clusterPath, centroids) {
-	var tempcluster = []
-	var preDist
-	var preIndex = 0
-	var postDist = 0
-	var postIndex
-	var tempDist
-	var temppoint
-	for (var i = 0; i < cluster.length; i++) {
-		tempcluster.push(cluster[clusterPath[i]])
-	}
-	for (var i = 0; i < cluster.length; i++) {
-		preDist = 1000
-		postDist = 1000
-		if (i != 0) {
-		}
-		//클러스터 내부의 출발점, 도착점 지정
-		for (var j = 0; j < tempcluster[i].length; j++) {
-			//다음 순서의 클러스터에 가까운 지점
-			if (i != tempcluster.length - 1) {
-				tempDist = getDistanceBetweenPoint(tempcluster[i][j][0], centroids[i + 1])
-				if (tempDist < postDist) {
-					postDist = tempDist
+function clusterRearrange(cluster, clusterPath, centroids){
+
+  var tempcluster = []
+  var tempcentroids = []
+  var tempcluster2 = []
+  var preDist
+  var preIndex = 0
+  var postDist = 0
+  var postIndex
+  var tempDist
+  var temppoint
+  var shortestDist
+  for (var i=0; i<tempcluster.length-1; i++){
+    tempcluster2.push([])
+    for (var j=0; j<tempcluster[i].length; j++){
+      tempcluster2[i],push([])
+    }
+  }
+  console.log("ger")
+
+  for (var i=0; i<cluster.length; i++){
+    tempcluster.push(cluster[clusterPath[i]])
+    tempcentroids.push(centroids[clusterPath[i]])
+  }
+  console.log(tempcluster)
+  console.log(tempcluster2)
+  //클러스터의 시작점, 도착점 설정
+  for (var i=0; i<tempcluster.length-1; i++){
+    shortestDist = 100000
+    for (var j=0; j<tempcluster[i].length; j++){
+      for (var l=0; l<tempcluster[i+1].length; l++){
+        tempDist = getDistanceBetweenPoint(tempcluster[i][j][0], tempcluster[i+1][l][0])
+        if (tempDist < shortestDist) {
+					shortestDist = tempDist
 					postIndex = j
+          preIndex = l
 				}
-			}
-			//이전 순서의 클러스터에 가까운 지점
-			if (i != 0) {
-				tempDist = getDistanceBetweenPoint(tempcluster[i][j][0], centroids[i - 1])
-				if (tempDist < preDist) {
-					preDist = tempDist
-					preIndex = j
-				}
-			}
-			//오류 방지
-			if (postIndex == preIndex && tempcluster[i].length != 1) {
-				if (postIndex != 0) preIndex = 0
-				else preIndex = 1
-			}
-		}
-		temppoint = tempcluster[i][preIndex]
-		tempcluster[i][preIndex] = tempcluster[i][0]
-		tempcluster[i][0] = temppoint
-		temppoint = cluster[i][postIndex]
-		tempcluster[i][postIndex] = tempcluster[i][tempcluster[i].length - 1]
-		tempcluster[i][tempcluster[i].length - 1] = temppoint
-	}
-	return tempcluster
+      }
+    }
+    //현재 클러스터에서 마지막을 교체
+    temppoint = tempcluster[i][postIndex]
+    tempcluster[i][postIndex] = tempcluster[i][tempcluster[i].length-1]
+    tempcluster[i][tempcluster[i].length-1] = temppoint
+    //뒤 클러스터에서 시작점을 교체
+    temppoint = tempcluster[i+1][preIndex]
+    tempcluster[i+1][preIndex] = tempcluster[i+1][0]
+    tempcluster[i+1][0] = temppoint
+  }
+
+
+  return tempcluster
 }
 
 module.exports = {
