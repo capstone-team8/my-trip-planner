@@ -130,6 +130,12 @@ export default {
 				map.setZoom(17);
 			})
 		},
+		showCountry(place){ 
+			this.$refs.mapRef.$mapPromise.then((map) => {
+				map.panTo(place); // 맵 이동
+				map.setZoom(10);
+			})
+		},
 		showRoute(places){ // 루트 설정
 			let wp=[];
 
