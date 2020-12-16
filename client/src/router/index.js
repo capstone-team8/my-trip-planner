@@ -3,6 +3,10 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home'
 import Login from '../views/Login'
 import NewPlan from '../views/NewPlan'
+import EditPlan from '../views/EditPlan'
+import ViewPlan from '../views/ViewPlan'
+import MyPlans from '../views/MyPlans.vue'
+import SharedPlans from '../views/SharedPlans.vue'
 
 Vue.use(VueRouter)
 
@@ -13,9 +17,31 @@ const routes = [
 		component: Home,
 		children: [
 			{
-				path: '/new',
+				path: '/plan/new',
 				name: 'NewPlan',
 				component: NewPlan
+			},
+			{
+				path: '/my-plans',
+				name: 'MyPlans',
+				component: MyPlans
+			},
+			{
+				path: '/plan/edit/:id',
+				name: 'EditPlan',
+				component: EditPlan,
+				props: true
+			},
+			{
+				path: '/shared-plans',
+				name: 'SharedPlans',
+				component: SharedPlans
+			},
+			{
+				path: '/plan/:id',
+				name: 'ViewPlan',
+				component: ViewPlan,
+				props: true
 			}
 		]
 	},

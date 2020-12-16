@@ -4,6 +4,8 @@ const db = require('../config/database')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
+const Plan = require('./Plan')
+
 const TOKEN = require('../constants').TOKEN
 
 const User = db.define('user', {
@@ -27,6 +29,9 @@ const User = db.define('user', {
 		type: DataTypes.INTEGER
 	}
 })
+// User belongs to many Plan (M:N)
+User.belongsToMany(Plan, { through: 'userPlans' })
+Plan.belongsToMany(User, { through: 'userPlans' })
 
 // Encrypt the password before save
 User.beforeSave(async (user) => {

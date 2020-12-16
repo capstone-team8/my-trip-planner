@@ -104,6 +104,9 @@ export default {
 				this.showFocused()
      		}
 		},
+		locationsSelected: function() {
+			this.showFocused()
+		}
 	},
 	methods: {
 		showFocused() { 
@@ -117,7 +120,7 @@ export default {
 			else if(this.locationsSelected.length == 1){
 				for (let m of this.locationsSelected){
 					this.$refs.mapRef.$mapPromise.then((map) => {
-						map.panTo(m.location); // 맵 이동
+						map.panTo(m.geometry.location); // 맵 이동
 						map.setZoom(17);
 					})
 				}

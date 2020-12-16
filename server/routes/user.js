@@ -3,16 +3,27 @@ const router = express.Router()
 
 const User = require('../models/User')
 
-// Get all
+// Get user
 router.get('/', (req, res) => {
-	User.findAll()
-		.then((users) => {
-			res.json(users)
-		})
-		.catch((error) => {
-			console.error(error)
-			res.send(error)
-		})
+	if (req.query.name) {
+		User.findOne({ where: { name: req.query.name } })
+			.then((user) => {
+				res.json(user)
+			})
+			.catch((error) => {
+				console.error(error)
+				res.send(error)
+			})
+	} else {
+		User.findAll()
+			.then((users) => {
+				res.json(users)
+			})
+			.catch((error) => {
+				console.error(error)
+				res.send(error)
+			})
+	}
 })
 
 // Registration
