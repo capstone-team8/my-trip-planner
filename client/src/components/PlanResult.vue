@@ -41,6 +41,14 @@
 							<vs-td>
 								{{ place.name }}
 							</vs-td>
+							<vs-td>
+								<vs-tooltip class="button-right" v-if="places.indexOf(place)">
+									<i class="bx bxs-navigation" @click.stop="openRouteDirection(places, place)" />
+									<template #tooltip>
+										GoogleMap 길찾기
+									</template>
+								</vs-tooltip>
+							</vs-td>
 						</vs-tr>
 					</template>
 				</vs-table>
@@ -219,6 +227,17 @@ export default {
 				.catch((err) => {
 					alert('일정 삭제 중 에러가 발생했습니다.')
 				})
+		},
+		openRouteDirection(places, place) {
+			// GoogleMap 길찾기 창 열기
+			// URL 생성
+			let url = 'https://www.google.com/maps/dir/'
+			const startingPoint = places[places.indexOf(place) - 1]
+			url += startingPoint.name + ',' + startingPoint.formatted_address + '/'
+			url += place.name + ',' + place.formatted_address
+
+			// 새 창에서 열기
+			window.open(url, '_blank')
 		}
 	}
 }
@@ -258,5 +277,9 @@ h2 {
 .button-group {
 	display: flex;
 	flex-direction: row;
+}
+
+.bxs-navigation {
+	margin-right: 0.7rem;
 }
 </style>
