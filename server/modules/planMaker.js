@@ -1,31 +1,116 @@
+function createPath(input, k){
+	var places=[]
+	var hotels=[]
+	places = inputExtract(input)
+	hotels = placeDivider_hotel(places)
+	if(hotels.length==0){
+		createPathWithoutHotels(input,k)
+	}
+	else if(hotels.length==1){
+		createPathWithOneHotels(input,k)
+	}
+	else{
+		createPathWithHotels(input,k)
+	}
+}
 //호텔 여러개 흩어져있는것. 수정필요
-function createPathWithHotels(input) {
+function createPathWithHotels(input,k) {
 	var places = []
 
 	//숙소, 그 외 장소 분류
 	var hotels = []
 	var travels = []
-	var distanceToHotel = []
+	var distanceToHotel
+	var distanceMatrix
 
 	//hotel경로 체크용
 	var path = []
 	var paths = []
 	var pathName = []
-	var hotelvisited = []
+	var centroids = []
+	var cluster = []
 	//input에서 필요한 요소들만 추출
 	places = inputExtract(input)
 	//장소들을 숙소와 그 외 장소들로 구분
 	hotels = placeDivider_hotel(places)
+	var hotelvisited = new Array(hotels.length)
+	var H=hotels.length
 	travels = placeDivider_tour(tour)
-	//호텔간 거리 매트릭스 생성
-	createDistanceMatrix(hotels)
-	//호텔간 경로 생성
-	nearestNeighbor(hotels)
+	var T=travels.length
+	var finalPath=new Array(k)
+
+	// 호텔간 거리 매트릭스 생성
+	// createDistanceMatrix(hotels)
+	// 호텔간 경로 생성
+	// nearestNeighbor(hotels)
+
 	//가장 가까운 호텔 탐색 후 병합
-	nearestHotel(travels, hotels)
-	//id 추출해서 pathName에 저장(최종 경로)
-	getPathName(hotels)
-	console.log(pathName)
+	distanceToHotel = nearestHotel(travels, hotels)
+	//centroids 초기화
+	centroids = getDataRange(k, places)
+	//k-means 10번 실행
+	for (var i = 0; i < 10; i++) {
+		cluster = getCloseCentroid(places, centroids)
+		centroids = getNewCentroid(places, cluster, centroids)
+	}
+	//cluster = getCloseCentroid(places, centroids)
+	//클러스터간 경로 생성(centroids 기반으로 nearest neighbor 실행)
+	var centroidsplaces = new Array(k)
+	for (var i = 0; i < k; i++) {
+		centroidsplaces[i] = []
+		centroidsplaces[i].push(centroids[i])
+		centroidsplaces[i].push('centroid')
+		centroidsplaces[i].push(i)
+	}
+	//클러스터간 거리 매트릭스 생성
+	distanceMatrix = createDistanceMatrix(centroidsplaces)
+	//클러스터간 경로 생성
+	path = nearestNeighbor(centroidsplaces, distanceMatrix)
+
+	clusterPath = getPathName(path)
+	var tmpindex
+	var hotelindex
+	var visitindex
+	var visitcheck=0
+	var pathdistance
+	for(var i=0;i<k;i++){
+		var tmp=100000
+		for(var j=0;j<path[i].length;j++){
+			for(var l=0;l<H;l++){
+				visitcheck=0
+				if(tmp>distanceToHotel[j][l]){
+					for(var m=0;m<hotelvisited.length;m++){
+						if(j==hotelvisited[m]){
+							visitcheck=1
+							break
+						}
+					}
+					if(visitcheck==0){
+						tmp=distanceToHotel[j][l]
+						tmpindex=j
+						hotelindex=l
+					}
+				}
+			}
+		}
+		pathdistance=createDistanceMatrix(cluster[clusterPath[i]])
+		if(i==0){
+			finalpath[i]=new Array(cluster[clusterPath[i]].length+1)
+			visitindex=hotelindex
+		}
+		else{
+			finalpath[i]=new Array(cluster[clusterPath[i]].length+2)
+			finalPath[i][0]=finalPath[i-1][finalPath[i-1].length-1]
+			if(visitindex!=hotelindex){
+				hotelvisited.push(visitindex)
+				visitindex=hotelindex
+			}
+		}
+		finalpath[i].push(nearestwithend(tmpindex,cluster[clusterPath[i]],pathdistance))
+		finalpath[i][finalpath[i].length-1]=hotels[hotelindex]
+	}
+
+	return finalPath
 }
 
 //호텔 고려 안하고 모두 클러스터화 후 경로설정
@@ -285,6 +370,43 @@ function createPathWithOneHotels(input, k) {
   	return finalPath
 }
 
+function nearestwithend(end, placeList, distanceMatrix) {
+	var remaining = []
+	for (var i = 0; i < placeList.length; i++) {
+		remaining[i] = i
+	}
+	var tmp=0
+	tmp=ramaining[0]
+	remaining[0]=remaining[end]
+	remaining[end]=tmp
+	var pathindex = [remaining[0]]
+	var path = []
+	var currentDistance
+	//pathName = [places[remaining[0]][2]];
+	//pathName = [hotels[[remaining[0]]][2]];
+	for (var i = 0; i < placeList.length - 1; i++) {
+		var nearestDistance = 1000
+		var nearestPoint = null
+		var remainingIndex = 0
+
+		for (var j = i + 1; j < placeList.length; j++) {
+			currentDistance = distanceMatrix[pathindex[i]][remaining[j]]
+			if (currentDistance < nearestDistance) {
+				nearestPoint = remaining[j]
+				nearestDistance = currentDistance
+				remainingIndex = j
+			}
+		}
+		remaining = swap(remaining, i + 1, remainingIndex)
+		pathindex.push(remaining[i + 1])
+	}
+	//index를 토대로 path 추출
+	for (var i = 0; i < placeList.length; i++) {
+		path[placeList.length-i-1] = placeList[pathindex[i]]
+	}
+	return path
+}
+
 //Nearest neighbor. path return
 function nearestNeighbor(placeList, distanceMatrix) {
 	var remaining = []
@@ -436,24 +558,19 @@ function placeDivider_tour(placeList) {
 function nearestHotel(travels, hotels) {
 	var T = travels.length
 	var H = hotels.length
-	distanceToHotel = new Array(T)
-	var shortest = 100
+	var distanceToHotel = new Array(T)
+	var shortest = 1000
 	var temp
 	var shortestindex
 	for (var i = 0; i < T; i++) {
-		shortest = 100
+		shortest = 1000
+		distanceToHotel[i]= new Array(H)
 		for (var j = 0; j < H; j++) {
 			temp = getDistanceBetweenLatLon(travels[i], hotels[j])
-			if (temp < shortest) {
-				shortest = temp
-				shortestindex = j
-				distanceToHotel[i] = hotels[j]
-			}
+			distanceToHotel[i][j]=temp
 		}
-		hotels[shortestindex].push(travels[i])
-		shortest = 100
 	}
-	console.log(hotels)
+	return distanceToHotel
 }
 
 //input에서 필요한 정보들 추출
@@ -705,6 +822,7 @@ function clusterRearrange(cluster, clusterPath, centroids){
 }
 
 module.exports = {
+	createPath: createPath,
 	createPathWithHotels: createPathWithHotels,
 	createPathWithoutHotels: createPathWithoutHotels,
 	createPathWithOneHotels: createPathWithOneHotels

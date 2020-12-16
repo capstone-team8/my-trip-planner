@@ -7,7 +7,7 @@ const planMaker = require('../modules/planMaker')
 router.put('/make', (req, res) => {
 	let places = req.body.places
 	const days = req.body.days
-	const planPlaceIds = planMaker.createPathWithoutHotels(places, days)
+	const planPlaceIds = planMaker.createPath(places, days)
 
 	const oriIds = places.map(el => el.place_id)
 	let planPlaces = []
