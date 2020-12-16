@@ -22,6 +22,7 @@ function createPathWithHotels(input,k) {
 	var travels = []
 	var distanceToHotel
 	var distanceMatrix
+	var clusterPath
 
 	//hotel경로 체크용
 	var path = []
@@ -29,15 +30,16 @@ function createPathWithHotels(input,k) {
 	var pathName = []
 	var centroids = []
 	var cluster = []
+	var finaltmppath
 	//input에서 필요한 요소들만 추출
 	places = inputExtract(input)
 	//장소들을 숙소와 그 외 장소들로 구분
 	hotels = placeDivider_hotel(places)
 	var hotelvisited = new Array(hotels.length)
 	var H=hotels.length
-	travels = placeDivider_tour(tour)
+	travels = placeDivider_tour(places)
 	var T=travels.length
-	var finalPath=new Array(k)
+	var finalpath=new Array(k)
 
 	// 호텔간 거리 매트릭스 생성
 	// createDistanceMatrix(hotels)
@@ -50,7 +52,7 @@ function createPathWithHotels(input,k) {
 	centroids = getDataRange(k, places)
 	//k-means 10번 실행
 	for (var i = 0; i < 10; i++) {
-		cluster = getCloseCentroid(places, centroids)
+		cluster = getCloseCentroid(travels, centroids)
 		centroids = getNewCentroid(places, cluster, centroids)
 	}
 	//cluster = getCloseCentroid(places, centroids)
@@ -100,17 +102,28 @@ function createPathWithHotels(input,k) {
 		}
 		else{
 			finalpath[i]=new Array(cluster[clusterPath[i]].length+2)
-			finalPath[i][0]=finalPath[i-1][finalPath[i-1].length-1]
+			finalpath[i][0]=finalpath[i-1][finalpath[i-1].length-1]
 			if(visitindex!=hotelindex){
 				hotelvisited.push(visitindex)
 				visitindex=hotelindex
 			}
 		}
-		finalpath[i].push(nearestwithend(tmpindex,cluster[clusterPath[i]],pathdistance))
-		finalpath[i][finalpath[i].length-1]=hotels[hotelindex]
+		finaltmppath=nearestwithend(tmpindex,cluster[clusterPath[i]],pathdistance)
+		if(i==0){
+			for(var j=0;j<finalpath[i].length-1;j++){
+				finalpath[i][j]=finaltmppath[j][2]
+
+			}
+		}
+		else{
+			for(var j=0;j<finalpath[i].length-2;j++){
+				finalpath[i][j+1]=finaltmppath[j][2]
+			}
+		}
+		finalpath[i][finalpath[i].length-1]=hotels[hotelindex][2]
 	}
 
-	return finalPath
+	return finalpath
 }
 
 //호텔 고려 안하고 모두 클러스터화 후 경로설정
@@ -376,7 +389,7 @@ function nearestwithend(end, placeList, distanceMatrix) {
 		remaining[i] = i
 	}
 	var tmp=0
-	tmp=ramaining[0]
+	tmp=remaining[0]
 	remaining[0]=remaining[end]
 	remaining[end]=tmp
 	var pathindex = [remaining[0]]
