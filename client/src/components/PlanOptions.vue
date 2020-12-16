@@ -14,12 +14,22 @@
 					<template #tbody>
 						<vs-tr>
 							<vs-td>
+								여행 제목
+							</vs-td>
+							<vs-td>
+								<vs-row align="center">
+									<vs-input v-model="planOptions.name" class="input-plan-name" />
+								</vs-row>
+							</vs-td>
+						</vs-tr>
+						<vs-tr>
+							<vs-td>
 								며칠동안 여행하나요?
 							</vs-td>
 							<vs-td>
 								<vs-row align="center">
-									<vs-input type="number" v-model="nights" class="input-nights" />
-									<span> 박 {{ parseInt(nights) + 1 }}일 </span>
+									<vs-input type="number" v-model="planOptions.nights" class="input-nights" />
+									<span> 박 {{ parseInt(planOptions.nights) + 1 }}일 </span>
 								</vs-row>
 							</vs-td>
 						</vs-tr>
@@ -29,10 +39,10 @@
 							</vs-td>
 							<vs-td>
 								<vs-row>
-									<vs-radio v-model="isHotel" val="1" disabled>
+									<vs-radio v-model="planOptions.isHotel" val="1" disabled>
 										네
 									</vs-radio>
-									<vs-radio v-model="isHotel" val="0">
+									<vs-radio v-model="planOptions.isHotel" val="0">
 										아니오
 									</vs-radio>
 								</vs-row>
@@ -50,15 +60,13 @@
 
 <script>
 export default {
-	data: function() {
-		return {
-			nights: 0,
-			isHotel: 0
-		}
+	props: {
+		planOptions: Object
 	},
 	methods: {
 		proceed() {
-			this.$emit('moveToSecond', { planOptions: { nights: parseInt(this.nights) } })
+			this.planOptions.nights = parseInt(this.planOptions.nights)
+			this.$emit('moveToSecond', { planOptions: this.planOptions })
 		}
 	}
 }
@@ -102,5 +110,8 @@ h2 {
 .input-nights .vs-input {
 	width: 4rem;
 	margin-right: 0.3rem;
+}
+.input-plan-name .vs-input {
+	width: 8rem;
 }
 </style>

@@ -19,7 +19,7 @@
 						로그인
 					</vs-button>
 					<vs-row class="my-new-account" justify="flex-end">
-						<p @click="isSignupDialog = true">관리자 계정 생성</p>
+						<p @click="isSignupDialog = true">회원 가입</p>
 					</vs-row>
 				</vs-col>
 			</vs-row>

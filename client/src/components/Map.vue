@@ -104,6 +104,9 @@ export default {
 				this.showFocused()
      		}
 		},
+		locationsSelected: function() {
+			this.showFocused()
+		}
 	},
 	methods: {
 		showFocused() { 
@@ -117,7 +120,6 @@ export default {
 			else if(this.locationsSelected.length == 1){
 				this.showPlace(this.locationsSelected[0].geometry.location, 17)			
 			}
-			
 		},
 		showPlace(place, zoom){ // place에 {lat,lng}, zoom에 마커는 17, 도시는 10 정도 설정
 			this.$refs.mapRef.$mapPromise.then((map) => {

@@ -26,48 +26,60 @@
 								class="table-expand"
 								v-if="locationFocused && locationFocused.place_id == location.place_id"
 							>
-								<div class="table-expand-buttons">
-									<vs-tooltip>
-										<vs-button v-on:click="add(location, 'tour')" gradient success icon>
-											<i class="bx bxs-map"></i>
-										</vs-button>
-										<template #tooltip>
-											관광지
-										</template>
-									</vs-tooltip>
-									<vs-tooltip>
-										<vs-button v-on:click="add(location, 'night')" gradient primary icon>
-											<i class="bx bxs-moon"></i>
-										</vs-button>
-										<template #tooltip>
-											야경
-										</template>
-									</vs-tooltip>
-									<vs-tooltip>
-										<vs-button v-on:click="add(location, 'restaurant')" gradient color="#ff3399" icon>
-											<i class="bx bx-restaurant"></i>
-										</vs-button>
-										<template #tooltip>
-											식당
-										</template>
-									</vs-tooltip>
-									<vs-tooltip>
-										<vs-button v-on:click="add(location, 'cafe')" gradient warn icon>
-											<i class="bx bxs-coffee-alt"></i>
-										</vs-button>
-										<template #tooltip>
-											카페
-										</template>
-									</vs-tooltip>
-									<vs-tooltip>
-										<vs-button v-on:click="add(location, 'bar')" gradient color="#7d33ff" icon>
-											<i class="bx bxs-drink"></i>
-										</vs-button>
-										<template #tooltip>
-											바
-										</template>
-									</vs-tooltip>
-								</div>
+								<vs-row direction="column">
+									<vs-row justify="flex-end">
+										<div class="formatted_address">
+											{{location.formatted_address}}
+										</div>
+									</vs-row>
+									<vs-row justify="flex-end">
+										<vs-tooltip>
+											<vs-button v-on:click="add(location, 'tour')" gradient success icon>
+												<i class="bx bxs-map"></i>
+											</vs-button>
+											<template #tooltip>
+												관광지
+											</template>
+										</vs-tooltip>
+										<vs-tooltip>
+											<vs-button v-on:click="add(location, 'night')" gradient primary icon>
+												<i class="bx bxs-moon"></i>
+											</vs-button>
+											<template #tooltip>
+												야경
+											</template>
+										</vs-tooltip>
+										<vs-tooltip>
+											<vs-button
+												v-on:click="add(location, 'restaurant')"
+												gradient
+												color="#ff3399"
+												icon
+											>
+												<i class="bx bx-restaurant"></i>
+											</vs-button>
+											<template #tooltip>
+												식당
+											</template>
+										</vs-tooltip>
+										<vs-tooltip>
+											<vs-button v-on:click="add(location, 'cafe')" gradient warn icon>
+												<i class="bx bxs-coffee-alt"></i>
+											</vs-button>
+											<template #tooltip>
+												카페
+											</template>
+										</vs-tooltip>
+										<vs-tooltip>
+											<vs-button v-on:click="add(location, 'bar')" gradient color="#7d33ff" icon>
+												<i class="bx bxs-drink"></i>
+											</vs-button>
+											<template #tooltip>
+												바
+											</template>
+										</vs-tooltip>
+									</vs-row>
+								</vs-row>
 							</div>
 						</vs-td>
 					</vs-tr>
@@ -81,7 +93,12 @@
 					여행할 장소를 등록해주세요.
 				</template>
 				<template #tbody>
-					<vs-tr :key="location.place_id" v-for="location in locationsSelected" class="cursor-pointer" @click="toggleLocation(location)">
+					<vs-tr
+						:key="location.place_id"
+						v-for="location in locationsSelected"
+						class="cursor-pointer"
+						@click="toggleLocation(location)"
+					>
 						<vs-td>
 							{{ location.name }}
 						</vs-td>
@@ -137,7 +154,6 @@ export default {
 			requestHandler
 				.sendGetRequest('/location/search', { text: this.searchInput })
 				.then((response) => {
-
 					this.locations = response.locations
 
 					if (!this.locations.length) {
@@ -187,7 +203,7 @@ export default {
 				})
 				.then((response) => {
 					// 일정생성 성공
-					this.$emit('planMade', {planData: response, locationsSelected: this.locationsSelected})
+					this.$emit('planMade', { planData: response, locationsSelected: this.locationsSelected })
 				})
 				.catch((error) => {
 					alert('일정 생성에 실패했습니다. 다시 시도해주세요.')
@@ -197,10 +213,10 @@ export default {
 		// 데이터 초기화
 		resetData() {
 			Object.assign(this.$data, this.$options.data())
-			this.$emit('resetData', {locationsSelected: this.locationsSelected})
+			this.$emit('resetData', { locationsSelected: this.locationsSelected })
 		},
 		back() {
-			this.$emit('moveToFirst', {locationsSelected: this.locationsSelected})
+			this.$emit('moveToFirst', { locationsSelected: this.locationsSelected })
 		}
 	},
 	mounted() {
@@ -254,15 +270,15 @@ td {
 	padding: 10px 12px;
 }
 
-.table-expand-buttons {
-	display: flex;
-}
-
 .table-search .vs-table__td {
 	padding: 0;
 }
 
 .td-title {
 	padding: 10px 12px;
+}
+
+.formatted_address {
+	margin-bottom: 0.5rem;
 }
 </style>
