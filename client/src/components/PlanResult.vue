@@ -75,9 +75,14 @@
 			<vs-button icon dark @click="back">
 				<i class="bx bx-arrow-back" />
 			</vs-button>
-			<vs-button @click="savePlan">
-				일정 저장
-			</vs-button>
+			<div class="button-group">
+				<vs-button v-if="mode == 'edit'" danger icon @click="deletePlan">
+					<i class="bx bxs-trash" />
+				</vs-button>
+				<vs-button @click="savePlan">
+					일정 저장
+				</vs-button>
+			</div>
 		</vs-row>
 	</div>
 </template>
@@ -198,6 +203,22 @@ export default {
 						console.error(error)
 					})
 			}
+		},
+		deletePlan() {
+			requestHandler
+				.sendDeleteRequest('/plan', { id: this.id })
+				.then((res) => {
+					if (res.success) {
+						alert('일정 삭제에 성공했습니다.')
+
+						this.$router.replace({ name: 'MyPlans' })
+					} else {
+						alert('일정 삭제에 실패했습니다.')
+					}
+				})
+				.catch((err) => {
+					alert('일정 삭제 중 에러가 발생했습니다.')
+				})
 		}
 	}
 }
@@ -232,5 +253,10 @@ h2 {
 
 .button-right {
 	float: right;
+}
+
+.button-group {
+	display: flex;
+	flex-direction: row;
 }
 </style>

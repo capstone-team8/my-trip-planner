@@ -234,4 +234,14 @@ router.put('/is-shared', async (req, res) => {
 	res.json({ success: true })
 })
 
+// Delete a plan
+router.delete('/', async (req, res) => {
+	// Find the plan
+	const plan = await Plan.findOne({where: req.query})
+
+	// Delete the plan
+	await plan.destroy()
+	res.send({ success: true })
+})
+
 module.exports = router

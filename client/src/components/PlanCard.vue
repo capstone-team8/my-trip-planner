@@ -24,14 +24,9 @@
 					일정 공개하기
 				</template>
 			</vs-tooltip>
-			<vs-tooltip shadow>
-				<vs-button shadow primary icon @click.stop="editPlan">
-					<i class="bx bxs-edit"></i>
-				</vs-button>
-				<template #tooltip>
-					일정 수정하기
-				</template>
-			</vs-tooltip>
+			<vs-button shadow primary icon @click.stop="editPlan">
+				<i class="bx bxs-edit"></i>
+			</vs-button>
 		</template>
 	</vs-card>
 </template>

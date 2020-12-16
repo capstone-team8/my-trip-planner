@@ -45,5 +45,15 @@ export default {
 		} catch (error) {
 			throw error
 		}
+	},
+	sendDeleteRequest: async (endPoint, params) => {
+		const url = process.env.VUE_APP_API_DOMAIN + endPoint
+		try {
+			const res = await axios.delete(url, { params: params })
+
+			return res.data
+		} catch (error) {
+			throw error
+		}
 	}
 }
