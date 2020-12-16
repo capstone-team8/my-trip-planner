@@ -36,6 +36,10 @@ body {
 	height: 100%;
 }
 
+.my-page {
+	margin-top: 100px;
+}
+
 .vs-table table {
 	min-width: 0 !important;
 }

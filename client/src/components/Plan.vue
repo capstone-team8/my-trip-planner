@@ -1,5 +1,5 @@
 <template>
-	<div class="newPlan">
+	<div class="my-page">
 		<vs-row justify="center">
 			<vs-col class="card" w="8" sm="11">
 				<vs-row class="fullHeight">
@@ -179,10 +179,6 @@ export default {
 </script>
 
 <style scoped>
-.newPlan {
-	margin-top: 100px;
-}
-
 .map,
 .planMaker {
 	width: 90%;

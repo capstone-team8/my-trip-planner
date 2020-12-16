@@ -30,16 +30,27 @@ router.put('/make', (req, res) => {
 	res.status(200).json(planPlaces)
 })
 
-// Get all plans
-router.get('/', (req, res) => {
-	Plan.findAll()
-		.then((plans) => {
-			res.json(plans)
-		})
-		.catch((err) => {
-			console.error(err)
-			res.send(err)
-		})
+// Get all plans with members
+router.get('/', async (req, res) => {
+	try {
+		const plans = await Plan.findAll({ where: req.query })
+
+		result = []
+		for (plan of plans) {
+			let planData = plan.get({ plain: true })
+			planData.members = []
+
+			const members = await plan.getUsers()
+			for (member of members) planData.members.push(member.nickname)
+
+			result.push(planData)
+		}
+
+		res.json(result)
+	} catch (err) {
+		console.error(err)
+		res.status(400).send(err)
+	}
 })
 
 // Get a plan with authenticated user
@@ -101,7 +112,22 @@ router.get('/auth', auth, async (req, res) => {
 			return res.send({ success: false })
 		}
 	} else {
-		return res.send({ success: false })
+		// No query. find all plans corresponding to the user
+		const user = req.user
+		const plans = await user.getPlans()
+
+		result = []
+		for (plan of plans) {
+			let planData = plan.get({ plain: true })
+			planData.members = []
+
+			const members = await plan.getUsers()
+			for (member of members) planData.members.push(member.nickname)
+
+			result.push(planData)
+		}
+
+		return res.send(result)
 	}
 })
 
@@ -197,6 +223,15 @@ router.put('/', async (req, res) => {
 	}
 
 	res.status(200).send({ success: true })
+})
+
+// Set the plan's isShared as true
+router.put('/is-shared', async (req, res) => {
+	const plan = await Plan.findOne({ where: { id: req.body.id } })
+	plan.isShared = true
+	await plan.save()
+
+	res.json({ success: true })
 })
 
 module.exports = router
