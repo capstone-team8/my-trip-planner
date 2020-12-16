@@ -1,6 +1,6 @@
 <template>
 	<div class="container">
-		<GmapMap ref="mapRef" :center="{lat: 40.712391, lng: -74.007222}" :zoom="16" style="width: 100%; height: 100%">
+		<GmapMap ref="mapRef" :center="{lat: 40.712391, lng: -74.007222}" :zoom="10" style="width: 100%; height: 100%">
 			<div v-for="(m, index) in locationsSelected" :key="index">
 				<GmapMarker
 					v-if="m.type=='tour'"
@@ -99,7 +99,7 @@ export default {
 	watch: {
 		markerFocused: function() {
 			if (this.markerFocused) {
-				this.showPlace(this.markerFocused)
+				this.showPlace(this.markerFocused, 17)
 			} else {
 				this.showFocused()
      		}
@@ -118,19 +118,13 @@ export default {
 				this.$refs.mapRef.fitBounds(bounds);
 			}
 			else if(this.locationsSelected.length == 1){
-				for (let m of this.locationsSelected){
-					this.$refs.mapRef.$mapPromise.then((map) => {
-						map.panTo(m.geometry.location); // 맵 이동
-						map.setZoom(17);
-					})
-				}
+				this.showPlace(this.locationsSelected[0].geometry.location, 17)			
 			}
-			
 		},
-		showPlace(place){ 
+		showPlace(place, zoom){ // place에 {lat,lng}, zoom에 마커는 17, 도시는 10 정도 설정
 			this.$refs.mapRef.$mapPromise.then((map) => {
 				map.panTo(place); // 맵 이동
-				map.setZoom(17);
+				map.setZoom(zoom);
 			})
 		},
 		showRoute(places){ // 루트 설정
