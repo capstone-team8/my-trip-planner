@@ -33,7 +33,7 @@
 								</vs-row>
 							</vs-td>
 						</vs-tr>
-						<vs-tr>
+<!-- 						<vs-tr>
 							<vs-td>
 								숙소를 정했나요?
 							</vs-td>
@@ -47,7 +47,7 @@
 									</vs-radio>
 								</vs-row>
 							</vs-td>
-						</vs-tr>
+						</vs-tr> -->
 					</template>
 				</vs-table>
 			</vs-col>
