@@ -1,22 +1,32 @@
 <template>
-  <div class="home">
-    Contents
-  </div>
+	<div>
+		<my-navbar />
+		<router-view />
+	</div>
 </template>
 
 <script>
-import HelloWorld from '@/components/HelloWorld.vue'
+import Navbar from '../components/Navbar'
+import { getAuth } from '../utils/auth'
 
 export default {
-  name: 'Home',
-  components: {
-    HelloWorld
-  }
+	components: {
+		myNavbar: Navbar
+	},
+	created() {
+		getAuth().then((res) => {
+			if (res.isAuth) {
+				// Logined user
+				// Go to NewPlan page
+				if (this.$route.path == '/') this.$router.push({ name: 'NewPlan' })
+			} else {
+				// Not logined
+				// Go to Login page
+				this.$router.replace({ name: 'Login' })
+			}
+		})
+	}
 }
 </script>
 
-<style>
-.home {
-  margin-top: 100px;
-}
-</style>
+<style scoped></style>
